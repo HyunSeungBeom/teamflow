@@ -1,8 +1,7 @@
-# Git Workflow
+# Git 워크플로우
 
-- One task, one clear commit intent.
-- Commit message should indicate type and scope.
-- Keep generated planning artifacts and implementation commits separated when practical.
-- Do not rewrite history unless explicitly requested.
-- Link commit/task notes to requirement IDs for traceability.
-
+- 하나의 작업, 하나의 명확한 커밋 의도.
+- 커밋 메시지에 타입과 범위를 표시한다.
+- 계획 산출물과 구현 커밋을 실용적으로 분리한다.
+- 명시적으로 요청하지 않는 한 히스토리를 재작성하지 않는다.
+- 추적성을 위해 커밋/작업 노트에 요구사항 ID를 연결한다.

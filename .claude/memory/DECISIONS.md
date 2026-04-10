@@ -1,10 +1,10 @@
-# DECISIONS
+# 의사결정
 
-## Format
+## 형식
 - ID:
-- Decision:
-- Rationale:
-- Scope:
-- Linked risk IDs:
-- Date:
-- Owner:
+- 결정사항:
+- 근거:
+- 범위:
+- 연관 리스크 ID:
+- 날짜:
+- 담당자:

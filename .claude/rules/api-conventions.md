@@ -1,8 +1,7 @@
-# API Conventions
+# API 규약
 
-- Use versioned route namespaces when public API is exposed.
-- Validate request input at the boundary. Never trust client payload.
-- Return stable response shapes with explicit error codes.
-- Keep handlers thin. Move business logic to service/domain layer.
-- Require requirement ID trace in API implementation task notes.
-
+- 공개 API가 노출될 때는 버전이 포함된 라우트 네임스페이스를 사용한다.
+- 경계에서 요청 입력을 검증한다. 클라이언트 페이로드를 절대 신뢰하지 않는다.
+- 명시적 에러 코드가 포함된 안정적인 응답 형태를 반환한다.
+- 핸들러는 가볍게 유지한다. 비즈니스 로직은 서비스/도메인 레이어로 이동한다.
+- API 구현 작업 노트에 요구사항 ID 추적을 필수로 포함한다.

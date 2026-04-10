@@ -1,8 +1,7 @@
-# Project Structure
+# 프로젝트 구조
 
-- Respect existing module boundaries.
-- Place new files near their closest feature domain.
-- Avoid creating new top-level folders without strong justification.
-- Keep dependency direction consistent with architecture map.
-- If structure is unclear, consult `.planning/codebase/STRUCTURE.md` first.
-
+- 기존 모듈 경계를 존중한다.
+- 새 파일은 가장 가까운 기능 도메인 근처에 배치한다.
+- 강력한 근거 없이 최상위 폴더를 새로 만들지 않는다.
+- 아키텍처 맵과 일관된 의존성 방향을 유지한다.
+- 구조가 불명확한 경우 먼저 `.planning/codebase/STRUCTURE.md`를 참조한다.

@@ -1,23 +1,22 @@
-# Instruction Experiments
+# Instruction 실험
 
-Use this file to iterate on agent instructions like code.
+이 파일을 사용하여 에이전트 instruction을 코드처럼 반복 개선합니다.
 
-## Experiment Template
+## 실험 템플릿
 
 - ID:
-- Hypothesis:
-- Changed file(s):
-- Baseline behavior:
-- New behavior expected:
-- Measurement:
-- Result:
-- Keep/Rollback:
+- 가설:
+- 변경된 파일:
+- 기존 동작:
+- 기대하는 새로운 동작:
+- 측정 방법:
+- 결과:
+- 유지/롤백:
 
-## Suggested Metrics
+## 권장 지표
 
-- Cycle completion time
-- Number of human interrupts required
-- Rework count
-- Gate pass rate (plan check, verify, QC)
-- Regression count after fix/deploy
-
+- 사이클 완료 시간
+- 필요한 사람 개입 횟수
+- 재작업 횟수
+- 게이트 통과율 (계획 검증, 확인, QC)
+- 수정/배포 후 회귀 횟수

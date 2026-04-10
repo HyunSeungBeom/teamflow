@@ -1,10 +1,9 @@
-# Search Before Build
+# 만들기 전에 검색하기
 
-- Before introducing unfamiliar infra/framework patterns, check existing solutions first.
-- Reuse proven local patterns when they satisfy constraints.
-- If choosing a non-standard approach, document the first-principles reason.
-- Differentiate:
-  - tried-and-true patterns
-  - new/popular patterns that still need scrutiny
-  - original approach justified by specific constraints
-
+- 익숙하지 않은 인프라/프레임워크 패턴을 도입하기 전에 기존 솔루션을 먼저 확인한다.
+- 제약 조건을 충족하는 경우 검증된 로컬 패턴을 재사용한다.
+- 비표준 접근 방식을 선택하는 경우 원칙 기반 근거를 문서화한다.
+- 다음을 구분한다:
+  - 검증된 패턴
+  - 아직 검토가 필요한 새로운/인기 있는 패턴
+  - 특정 제약 조건으로 정당화되는 독자적 접근 방식

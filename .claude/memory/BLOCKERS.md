@@ -1,10 +1,10 @@
-# BLOCKERS
+# 블로커
 
-## Format
+## 형식
 - ID:
-- Blocker:
-- Impact:
-- Severity:
-- Needed decision/input:
-- Owner:
-- Status:
+- 블로커:
+- 영향:
+- 심각도:
+- 필요한 결정/입력:
+- 담당자:
+- 상태:

@@ -1,8 +1,7 @@
-# Testing
+# 테스팅
 
-- TDD is mandatory for domain and API logic changes.
-- Every task must include a measurable verify command or check.
-- Prefer targeted tests near changed behavior before broad test suites.
-- For UI flows, combine interaction checks with QC browser verification.
-- Regression tests are required for fixed defects.
-
+- 도메인 및 API 로직 변경에는 TDD가 필수다.
+- 모든 작업에는 측정 가능한 검증 명령어 또는 체크가 포함되어야 한다.
+- 광범위한 테스트 스위트보다 변경된 동작 근처의 타겟 테스트를 선호한다.
+- UI 흐름의 경우 상호작용 체크와 QC 브라우저 검증을 결합한다.
+- 수정된 결함에 대해서는 회귀 테스트가 필수다.

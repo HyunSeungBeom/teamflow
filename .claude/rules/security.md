@@ -1,8 +1,7 @@
-# Security
+# 보안
 
-- Never hardcode secrets or credentials.
-- Enforce input validation and output encoding for user-controlled data.
-- Apply least privilege for integration keys and external services.
-- Treat auth and authorization as explicit acceptance criteria, not implicit behavior.
-- Add tests for critical authz/authn paths when touched.
-
+- 시크릿이나 자격증명을 절대 하드코딩하지 않는다.
+- 사용자 제어 데이터에 대해 입력 검증과 출력 인코딩을 적용한다.
+- 통합 키와 외부 서비스에 최소 권한 원칙을 적용한다.
+- 인증(auth)과 인가(authorization)를 암묵적 동작이 아닌 명시적 인수 기준으로 처리한다.
+- 인증/인가 경로를 수정할 때 관련 테스트를 추가한다.

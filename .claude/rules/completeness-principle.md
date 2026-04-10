@@ -1,9 +1,8 @@
-# Completeness Principle
+# 완전성 원칙
 
-- Prefer complete, verifiable implementations when incremental cost is low.
-- Treat "80-90% done" as incomplete when edge cases and tests are straightforward.
-- Distinguish:
-  - lake: bounded work that can be completed now
-  - ocean: unbounded rewrite/migration requiring explicit scope decision
-- In reviews, call out avoidable shortcuts and missing verification.
-
+- 증분 비용이 낮을 때는 완전하고 검증 가능한 구현을 선호한다.
+- 엣지 케이스와 테스트가 간단한 경우 "80-90% 완료"를 미완성으로 취급한다.
+- 다음을 구분한다:
+  - 호수(lake): 지금 완료할 수 있는 한정된 작업
+  - 바다(ocean): 명시적 범위 결정이 필요한 무한한 재작성/마이그레이션
+- 리뷰 시 회피 가능한 편법과 누락된 검증을 지적한다.

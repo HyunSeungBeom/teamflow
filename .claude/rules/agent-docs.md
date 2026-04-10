@@ -1,8 +1,7 @@
-# Agent-First Documentation
+# 에이전트 우선 문서화
 
-- Write docs for agents first: explicit inputs, outputs, constraints, and gates.
-- Prefer checklists, schemas, and examples over narrative prose.
-- Keep file paths and command examples concrete.
-- Put rationale in short bullets; put execution steps in deterministic order.
-- Assume agent will explain to humans, not the other way around.
-
+- 에이전트를 위한 문서를 먼저 작성한다: 명시적 입력, 출력, 제약조건, 게이트.
+- 서술형 산문보다 체크리스트, 스키마, 예시를 선호한다.
+- 파일 경로와 명령어 예시를 구체적으로 유지한다.
+- 근거는 짧은 글머리표로, 실행 단계는 결정적(deterministic) 순서로 작성한다.
+- 에이전트가 사람에게 설명한다고 가정한다. 그 반대가 아니다.

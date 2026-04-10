@@ -1,8 +1,7 @@
-# Error Handling
+# 에러 처리
 
-- Fail fast at boundaries, fail safe for side effects.
-- Convert internal exceptions into user-safe error responses.
-- Never swallow errors silently.
-- Emit actionable logs with correlation identifiers when available.
-- Include at least one negative-path test for changed business logic.
-
+- 경계에서는 빠르게 실패하고, 부작용에 대해서는 안전하게 실패한다.
+- 내부 예외를 사용자 안전 에러 응답으로 변환한다.
+- 에러를 조용히 삼키지 않는다.
+- 가능한 경우 상관 식별자가 포함된 실행 가능한 로그를 생성한다.
+- 변경된 비즈니스 로직에 대해 최소 하나의 실패 경로 테스트를 포함한다.

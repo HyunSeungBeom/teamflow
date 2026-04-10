@@ -1,8 +1,7 @@
-# Database Rules
+# 데이터베이스 규칙
 
-- Prefer additive schema changes for safe rollout in brownfield systems.
-- Use migrations with reversible strategy when possible.
-- Do not mix schema migration and large feature refactor in one task.
-- Keep query logic centralized; avoid query duplication across layers.
-- Add tests for critical persistence paths and error cases.
-
+- 브라운필드 시스템에서 안전한 배포를 위해 추가적(additive) 스키마 변경을 선호한다.
+- 가능한 경우 되돌릴 수 있는 전략의 마이그레이션을 사용한다.
+- 스키마 마이그레이션과 대규모 기능 리팩터링을 하나의 작업에 섞지 않는다.
+- 쿼리 로직을 중앙화한다. 레이어 간 쿼리 중복을 피한다.
+- 핵심 영속성 경로와 에러 케이스에 대한 테스트를 추가한다.

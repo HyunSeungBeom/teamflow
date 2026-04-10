@@ -1,43 +1,43 @@
-# Orchestration Playbook (Instruction-As-Code)
+# 오케스트레이션 플레이북 (코드로서의 지시사항)
 
-## Core Principles
+## 핵심 원칙
 
-1. Work at feature/action level, not line-by-line coding.
-2. Parallelize independent workstreams by default.
-3. Keep human involvement for goals, gates, and tie-break decisions only.
-4. Use measurable verification whenever possible.
-5. Prefer stable local context files over long ad-hoc prompts.
-6. Search before building unfamiliar infrastructure or patterns.
-7. Prefer complete, bounded implementation ("boil the lake") over avoidable shortcuts.
-8. Treat unresolved high/critical risks as hard gates before execution/deploy.
-9. Emit one markdown audit log per major step under `.planning/audit/`.
-10. Treat document export as opt-in only; never generate delivery docs unless user requests it.
-11. For PR-driven intake, ingest GitHub comments first, then run fix + quality/QC loop.
-12. Treat security scan, health check, and rollback readiness as first-class operational gates.
+1. 코드 한 줄 단위가 아닌, 기능/액션 단위로 작업한다.
+2. 독립적인 작업 흐름은 기본적으로 병렬화한다.
+3. 사람의 개입은 목표 설정, 게이트 승인, 동점 결정에만 한정한다.
+4. 가능한 한 측정 가능한 검증을 사용한다.
+5. 길고 임시적인 프롬프트보다 안정적인 로컬 컨텍스트 파일을 선호한다.
+6. 익숙하지 않은 인프라나 패턴을 구축하기 전에 먼저 검색한다.
+7. 회피 가능한 편법보다 완전하고 범위가 한정된 구현("호수 끓이기")을 선호한다.
+8. 미해결 high/critical 리스크는 실행/배포 전 하드 게이트로 처리한다.
+9. 주요 단계마다 `.planning/audit/` 아래에 마크다운 감사 로그를 하나씩 생성한다.
+10. 문서 내보내기는 옵트인 전용으로 처리한다. 사용자가 요청하지 않는 한 딜리버리 문서를 생성하지 않는다.
+11. PR 기반 입력의 경우, GitHub 댓글을 먼저 수집한 후 수정 + 품질/QC 루프를 실행한다.
+12. 보안 스캔, 상태 점검, 롤백 준비를 최우선 운영 게이트로 처리한다.
 
-## Parallelization Rules
+## 병렬화 규칙
 
-- Parallel: independent file scopes, independent subsystems, independent analyses.
-- Sequential: shared write scope, migration ordering, blocker resolution.
-- Always define integration owner when using swarms.
+- 병렬 가능: 독립적인 파일 범위, 독립적인 서브시스템, 독립적인 분석.
+- 순차 필요: 공유 쓰기 범위, 마이그레이션 순서, 블로커 해결.
+- 스웜 사용 시 항상 통합 담당자를 지정한다.
 
-## Prompt Quality Rules
+## 프롬프트 품질 규칙
 
-- If output quality is weak, adjust instructions/context before changing model.
-- Treat command and skill markdown as executable logic.
-- Keep assumptions explicit and testable.
+- 출력 품질이 낮으면, 모델을 변경하기 전에 지시사항/컨텍스트를 먼저 조정한다.
+- 커맨드와 스킬 마크다운을 실행 가능한 로직으로 취급한다.
+- 가정은 명시적이고 테스트 가능하게 유지한다.
 
-## Verification Bias
+## 검증 편향
 
-- Strong where behavior is testable (code, tests, API, UI checks).
-- Cautious where quality is subjective (copy tone, humor, intent inference).
-- For design-constrained work, Figma MCP evidence is required when Figma links are present.
-- For Jira/Confluence links, use CLI ingest evidence instead of manual copy-paste assumptions.
-- For release lane, require security scan + health checks with evidence before ship.
+- 동작을 테스트할 수 있는 경우 강하게 검증 (코드, 테스트, API, UI 체크).
+- 품질이 주관적인 경우 신중하게 검증 (문구 톤, 유머, 의도 추론).
+- 디자인 제약이 있는 작업에서 Figma 링크가 있으면 Figma MCP 증거가 필수.
+- Jira/Confluence 링크가 있으면 수동 복사-붙여넣기 가정 대신 CLI 수집 증거를 사용한다.
+- 릴리스 단계에서는 배포 전 보안 스캔 + 상태 점검 증거가 필수.
 
-## Workflow Completion Status
+## 워크플로우 완료 상태
 
-For major workflows, end with one explicit status:
+주요 워크플로우 종료 시 다음 중 하나의 명시적 상태를 사용한다:
 - DONE
 - DONE_WITH_CONCERNS
 - BLOCKED

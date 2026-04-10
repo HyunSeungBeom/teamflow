@@ -1,59 +1,59 @@
-# Agent Operating Contract
+# 에이전트 운영 계약
 
-## Roles
+## 역할
 
-- PM Agents: discover, frame, prioritize, produce PRD/sprint/story artifacts.
-- Build Agents: implement with requirement trace, TDD scope, brownfield guardrails, and risk mitigation commitments.
-- QC Agents: verify functional and DS-critical quality before ship.
-- Ops Agents: deploy and monitor with rollback discipline.
-- Doc Agents: generate optional export artifacts (spreadsheet workbook EN/JA) on explicit user request.
+- PM 에이전트: 요구사항 발굴, 프레이밍, 우선순위 설정, PRD/스프린트/스토리 산출물 작성.
+- Build 에이전트: 요구사항 추적, TDD 범위, 브라운필드 가드레일, 리스크 완화 방침을 준수하며 구현.
+- QC 에이전트: 출시 전 기능 및 디자인 시스템 핵심 품질 검증.
+- Ops 에이전트: 롤백 원칙을 준수하며 배포 및 모니터링.
+- Doc 에이전트: 사용자의 명시적 요청 시 선택적 내보내기 산출물(스프레드시트 워크북 EN/JA) 생성.
 
-## Mode Of Work
+## 작업 방식
 
-1. Prefer multi-agent decomposition for non-overlapping work.
-2. Keep one integrator agent responsible for final coherence.
-3. Escalate only unresolved blockers and product decisions.
+1. 겹치지 않는 작업에 대해서는 멀티 에이전트 분해를 우선한다.
+2. 최종 일관성을 책임지는 통합 에이전트를 한 명 지정한다.
+3. 미해결 블로커와 제품 의사결정만 상위로 에스컬레이션한다.
 
-## Brownfield Discipline
+## 브라운필드 원칙
 
-- Follow approved patterns.
-- Avoid anti-pattern propagation.
-- Prioritize safe incremental change over broad rewrites.
-- Maintain a risk-impact register for in-scope changes and enforce severity gates.
+- 승인된 패턴을 따른다.
+- 안티패턴 전파를 방지한다.
+- 대규모 재작성보다 안전한 점진적 변경을 우선한다.
+- 범위 내 변경에 대한 리스크-영향 레지스터를 유지하고 심각도 게이트를 적용한다.
 
-## Human In The Loop
+## 사람의 역할 (Human In The Loop)
 
-Human should provide:
-- intent and constraints,
-- tie-break decisions,
-- acceptance at release gates.
+사람이 제공해야 하는 것:
+- 의도와 제약 조건,
+- 동점 상황의 결정,
+- 릴리스 게이트에서의 승인.
 
-Agent should own:
-- planning detail,
-- implementation,
-- verification,
-- operational memory updates.
-- per-step markdown audit logs.
+에이전트가 책임지는 것:
+- 상세 계획 수립,
+- 구현,
+- 검증,
+- 운영 메모리 업데이트,
+- 단계별 마크다운 감사 로그 작성.
 
-## Risk And Design Gates
+## 리스크 및 설계 게이트
 
-- Any in-scope unresolved `high`/`critical` risk blocks implementation/deploy.
-- If requirement/handoff includes Figma links, agent must read via Figma MCP and store evidence.
-- If brownfield input has no Figma link, run structured discovery + UI-contract flow before build.
-- After implementation, run strict quality gate (`fad:quality-gate`) and record the result.
-- Run `fad:optimize` between review and finish phases (no behavior change).
-- Before release lane, run security gate (`security-scan`) and block on secret/high-risk dependency findings.
-- Deploy requires pre/post `health-check`; failures trigger `incident-response` and rollback evaluation.
+- 범위 내 미해결 `high`/`critical` 리스크가 있으면 구현/배포를 차단한다.
+- 요구사항/핸드오프에 Figma 링크가 포함된 경우, 에이전트는 반드시 Figma MCP를 통해 읽고 증거를 저장해야 한다.
+- 브라운필드 입력에 Figma 링크가 없는 경우, 빌드 전에 구조화된 디스커버리 + UI 계약 흐름을 실행한다.
+- 구현 후, 엄격한 품질 게이트(`fad:quality-gate`)를 실행하고 결과를 기록한다.
+- 리뷰와 완료 단계 사이에 `fad:optimize`를 실행한다(동작 변경 없음).
+- 릴리스 단계 진입 전, 보안 게이트(`security-scan`)를 실행하고 시크릿/고위험 의존성 발견 시 차단한다.
+- 배포 시 사전/사후 `health-check`를 필수로 수행하며, 실패 시 `incident-response`와 롤백 평가를 트리거한다.
 
-## Completion Status Protocol
+## 완료 상태 프로토콜
 
-Use one explicit status at end of major workflows:
-- `DONE`: completed and verified.
-- `DONE_WITH_CONCERNS`: completed with known risks/open concerns.
-- `BLOCKED`: cannot continue due to blocker.
-- `NEEDS_CONTEXT`: missing required information.
+주요 워크플로우 종료 시 다음 중 하나의 명시적 상태를 사용한다:
+- `DONE`: 완료 및 검증됨.
+- `DONE_WITH_CONCERNS`: 완료되었으나 알려진 리스크/미해결 우려 사항 존재.
+- `BLOCKED`: 블로커로 인해 진행 불가.
+- `NEEDS_CONTEXT`: 필요한 정보가 누락됨.
 
-If a task fails after 3 solid attempts, escalate with:
-- reason
-- what was attempted
-- recommended next action
+작업이 3회의 충실한 시도 후에도 실패하면 다음 정보와 함께 에스컬레이션한다:
+- 실패 사유
+- 시도한 내용
+- 권장 후속 조치
