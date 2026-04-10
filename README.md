@@ -19,7 +19,7 @@ teamflow/
 | 영역 | 기술 |
 |------|------|
 | Frontend | React + TypeScript + Tailwind CSS |
-| Backend | Node.js + Express |
+| Backend | Spring Boot (Java) |
 | Database | PostgreSQL + Redis |
 | Realtime | Socket.io |
 | Auth | Google OAuth 2.0 + JWT |
@@ -35,13 +35,18 @@ teamflow/
 ```
 .claude/
 ├── commands/              # 슬래시 커맨드 (/커맨드명으로 실행)
+│   ├── front/             #   프론트 전용 커맨드 (/front:커맨드명)
+│   ├── back/              #   백엔드 전용 커맨드 (/back:커맨드명)
+│   ├── fad/               #   공용 파이프라인 (/fad:커맨드명)
+│   ├── gsd/               #   공용 파이프라인 (/gsd:커맨드명)
+│   └── *.md               #   공용 커맨드 (/커맨드명)
 ├── conventions/           # 코드 컨벤션
-│   ├── frontend/          #   프론트엔드 (FSD, React, 라이브러리)
-│   └── backend/           #   백엔드 (추가 예정)
+│   ├── front/             #   프론트엔드 (FSD, React, 라이브러리)
+│   └── back/              #   백엔드 (Spring — 추가 예정)
 ├── skills/                # 스킬 (상세 워크플로우 가이드)
 │   ├── shared/            #   공용 스킬
-│   ├── frontend/          #   프론트엔드 전용
-│   └── backend/           #   백엔드 전용
+│   ├── front/             #   프론트 전용
+│   └── back/              #   백엔드 전용
 ├── rules/                 # 코드 규칙 (자동 적용)
 ├── hooks/                 # 런타임 훅
 ├── scripts/               # 유틸리티 스크립트
@@ -67,11 +72,24 @@ Claude Code에서 `/커맨드명`으로 실행할 수 있습니다.
 | `/fad:map-codebase` | 코드베이스 구조 분석 및 매핑 |
 | `/fad:pr-branch` | PR용 브랜치 생성 및 관리 |
 
-#### 개발 워크플로우
+#### 프론트엔드 전용
 
 | 커맨드 | 설명 |
 |--------|------|
-| `/new-feature` | FSD 아키텍처 기반 새 기능 개발 (7단계 워크플로우) |
+| `/front:new-feature` | FSD 아키텍처 기반 새 기능 개발 (7단계 워크플로우) |
+| `/front:discovery-ui-handoff` | 요구사항 → UI 컨셉 → UI 계약 → 핸드오프 |
+| `/front:qc-verify-ui` | 브라우저 자동화로 기능/디자인 검증 |
+
+#### 백엔드 전용
+
+| 커맨드 | 설명 |
+|--------|------|
+| `/back:*` | 백엔드 전용 커맨드 (Spring 기반 — @beanteacher가 추가 예정) |
+
+#### 개발 워크플로우 (공용)
+
+| 커맨드 | 설명 |
+|--------|------|
 | `/feature-swarm` | 병렬 워크스트림으로 기능 구현 |
 | `/fix-issue` | 이슈 분석 + 타겟 수정 + 검증 |
 | `/autoplan` | 자동 계획-리뷰 파이프라인 (PM + 아키텍처 + 설계 + 테스트) |
@@ -92,7 +110,6 @@ Claude Code에서 `/커맨드명`으로 실행할 수 있습니다.
 |--------|------|
 | `/code-quality-gate` | lint + 타입체크(TS) + 테스트 실행 |
 | `/qa-only` | 브라우저 기반 QA 리포트 (코드 변경 없음) |
-| `/qc-verify-ui` | 브라우저 자동화로 기능/디자인 검증 |
 
 #### PM (제품 관리)
 
@@ -128,7 +145,6 @@ Claude Code에서 `/커맨드명`으로 실행할 수 있습니다.
 | `/setup-doctor` | CLI, MCP, 인증 설정 상태 점검 |
 | `/install-browser-skills` | 브라우저 테스트 스킬 설치 (Playwright) |
 | `/brownfield-map-style` | 기존 코드베이스 패턴 분석 및 승인/안티 패턴 분류 |
-| `/discovery-ui-handoff` | 요구사항 → UI 컨셉 → UI 계약 → 핸드오프 |
 | `/gen-doc-sheet` | PM/빌드/QC 산출물을 스프레드시트로 내보내기 |
 
 #### 안전 제어
@@ -163,10 +179,10 @@ Claude Code에서 `/커맨드명`으로 실행할 수 있습니다.
 
 | 경로 | 내용 |
 |------|------|
-| `conventions/frontend/react-nextjs.md` | React/Next.js 코드 컨벤션 (FSD 구조, 네이밍, 패턴) |
-| `conventions/frontend/fsd-architecture.md` | Feature-Sliced Design 아키텍처 가이드 |
-| `conventions/frontend/library-stack.md` | 프론트엔드 라이브러리 스택 가이드 |
-| `conventions/backend/` | 백엔드 컨벤션 (추가 예정) |
+| `conventions/front/react-nextjs.md` | React/Next.js 코드 컨벤션 (FSD 구조, 네이밍, 패턴) |
+| `conventions/front/fsd-architecture.md` | Feature-Sliced Design 아키텍처 가이드 |
+| `conventions/front/library-stack.md` | 프론트엔드 라이브러리 스택 가이드 |
+| `conventions/back/` | 백엔드 컨벤션 (Spring — @beanteacher가 추가 예정) |
 
 ### 스킬
 

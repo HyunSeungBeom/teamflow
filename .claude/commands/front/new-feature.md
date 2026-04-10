@@ -3,8 +3,8 @@
 새로운 기능을 생성합니다. FSD 아키텍처에 맞춰 구조를 잡고 단계별로 구현합니다.
 
 ## 참조
-- 아키텍처: `conventions/frontend/fsd-architecture.md`
-- 라이브러리: `conventions/frontend/library-stack.md`
+- 아키텍처: `conventions/front/fsd-architecture.md`
+- 라이브러리: `conventions/front/library-stack.md`
 - Git 워크플로우: `skills/git-workflow/SKILL.md`
 
 ## 입력
