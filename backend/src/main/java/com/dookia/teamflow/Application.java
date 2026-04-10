@@ -1,4 +1,4 @@
-package com.teamflow.api;
+package com.dookia.teamflow;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

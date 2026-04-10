@@ -295,7 +295,7 @@ DELETE FROM refresh_tokens WHERE expires_at < NOW();
 ### 5.1 패키지 구조
 
 ```
-src/main/java/com/teamflow/
+src/main/java/com/dookia/teamflow/
 ├── config/
 │   ├── SecurityConfig.java              # Spring Security 설정
 │   └── JwtConfig.java                  # JWT 설정 값

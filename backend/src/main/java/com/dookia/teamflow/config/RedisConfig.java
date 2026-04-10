@@ -1,4 +1,4 @@
-package com.teamflow.api.config;
+package com.dookia.teamflow.config;
 
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;

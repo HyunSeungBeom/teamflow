@@ -58,12 +58,12 @@
 ### REST API 규칙
 
 ```
-GET    /api/v1/{resource}          목록 조회
-GET    /api/v1/{resource}/{id}     단건 조회
-POST   /api/v1/{resource}          생성
-PUT    /api/v1/{resource}/{id}     전체 수정
-PATCH  /api/v1/{resource}/{id}     부분 수정
-DELETE /api/v1/{resource}/{id}     삭제
+GET    /api/{resource}          목록 조회
+GET    /api/{resource}/{id}     단건 조회
+POST   /api/{resource}          생성
+PUT    /api/{resource}/{id}     전체 수정
+PATCH  /api/{resource}/{id}     부분 수정
+DELETE /api/{resource}/{id}     삭제
 ```
 
 ### 응답 포맷

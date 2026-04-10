@@ -1,4 +1,4 @@
-package com.teamflow.api.dto;
+package com.dookia.teamflow.dto;
 
 import lombok.Builder;
 import lombok.Getter;
