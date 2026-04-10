@@ -1,0 +1,49 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: teamflow-api
+  datasource:
+    url: jdbc:mysql://localhost:3309/teamflow?useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+  cache:
+    type: redis
+    redis:
+      time-to-live: 3600000  # 1시간
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:change-me-in-production-this-must-be-at-least-256-bits-long}
+    access-token-ttl-seconds: 1800
+    refresh-token-ttl-seconds: 1209600
+
+---
+# 로컬 개발 프로파일
+spring:
+  config:
+    activate:
+      on-profile: local
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
