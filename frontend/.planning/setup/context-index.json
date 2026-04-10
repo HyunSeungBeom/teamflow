@@ -1,0 +1,483 @@
+{
+  "type": "context_index",
+  "generated_at": "2026-04-10T02:30:38.134Z",
+  "root": "/Users/hyunseungbeom/private/teamflow/frontend",
+  "bundle": "standard",
+  "runtimes": [
+    "claude"
+  ],
+  "features": [
+    "fad_pipeline",
+    "pm_handoff",
+    "brownfield_guardrails",
+    "qc_verify",
+    "strict_quality_gate",
+    "audit_logging",
+    "ops_runbooks",
+    "pr_feedback",
+    "doc_export",
+    "runtime_adapters"
+  ],
+  "summary": {
+    "files": 146,
+    "bytes": 479143,
+    "estimated_tokens": 118219
+  },
+  "categories": {
+    "claude": {
+      "files": 22,
+      "bytes": 33457,
+      "estimated_tokens": 7882
+    },
+    "commands": {
+      "files": 47,
+      "bytes": 61117,
+      "estimated_tokens": 15299
+    },
+    "pm_assets": {
+      "files": 19,
+      "bytes": 210734,
+      "estimated_tokens": 52340
+    },
+    "rules": {
+      "files": 11,
+      "bytes": 3796,
+      "estimated_tokens": 952
+    },
+    "scripts": {
+      "files": 10,
+      "bytes": 101693,
+      "estimated_tokens": 25428
+    },
+    "skills": {
+      "files": 15,
+      "bytes": 34636,
+      "estimated_tokens": 7906
+    },
+    "planning": {
+      "files": 7,
+      "bytes": 1091,
+      "estimated_tokens": 273
+    },
+    "context": {
+      "files": 1,
+      "bytes": 7497,
+      "estimated_tokens": 1875
+    },
+    "docs": {
+      "files": 13,
+      "bytes": 24878,
+      "estimated_tokens": 6203
+    },
+    "other": {
+      "files": 1,
+      "bytes": 244,
+      "estimated_tokens": 61
+    }
+  },
+  "commands": [
+    {
+      "path": ".claude/commands/autopilot-loop.md",
+      "bytes": 1391,
+      "estimated_tokens": 348,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/autoplan.md",
+      "bytes": 1901,
+      "estimated_tokens": 476,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/brownfield-map-style.md",
+      "bytes": 1526,
+      "estimated_tokens": 382,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/careful.md",
+      "bytes": 514,
+      "estimated_tokens": 129,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/code-quality-gate.md",
+      "bytes": 1271,
+      "estimated_tokens": 318,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/dependency-audit.md",
+      "bytes": 1074,
+      "estimated_tokens": 269,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/deploy.md",
+      "bytes": 2035,
+      "estimated_tokens": 509,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/discovery-ui-handoff.md",
+      "bytes": 2470,
+      "estimated_tokens": 618,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/fad/help.md",
+      "bytes": 1119,
+      "estimated_tokens": 280,
+      "category": "commands",
+      "namespace": "fad"
+    },
+    {
+      "path": ".claude/commands/fad/map-codebase.md",
+      "bytes": 1125,
+      "estimated_tokens": 282,
+      "category": "commands",
+      "namespace": "fad"
+    },
+    {
+      "path": ".claude/commands/fad/optimize.md",
+      "bytes": 1606,
+      "estimated_tokens": 402,
+      "category": "commands",
+      "namespace": "fad"
+    },
+    {
+      "path": ".claude/commands/fad/pipeline.md",
+      "bytes": 3136,
+      "estimated_tokens": 784,
+      "category": "commands",
+      "namespace": "fad"
+    },
+    {
+      "path": ".claude/commands/fad/pr-branch.md",
+      "bytes": 1022,
+      "estimated_tokens": 256,
+      "category": "commands",
+      "namespace": "fad"
+    },
+    {
+      "path": ".claude/commands/fad/quality-gate.md",
+      "bytes": 2091,
+      "estimated_tokens": 523,
+      "category": "commands",
+      "namespace": "fad"
+    },
+    {
+      "path": ".claude/commands/fad/ship.md",
+      "bytes": 992,
+      "estimated_tokens": 248,
+      "category": "commands",
+      "namespace": "fad"
+    },
+    {
+      "path": ".claude/commands/feature-swarm.md",
+      "bytes": 1404,
+      "estimated_tokens": 351,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/fix-issue.md",
+      "bytes": 1774,
+      "estimated_tokens": 444,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/freeze.md",
+      "bytes": 624,
+      "estimated_tokens": 156,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/gen-doc-sheet.md",
+      "bytes": 1507,
+      "estimated_tokens": 377,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/gsd/help.md",
+      "bytes": 428,
+      "estimated_tokens": 107,
+      "category": "commands",
+      "namespace": "gsd"
+    },
+    {
+      "path": ".claude/commands/gsd/map-codebase.md",
+      "bytes": 450,
+      "estimated_tokens": 113,
+      "category": "commands",
+      "namespace": "gsd"
+    },
+    {
+      "path": ".claude/commands/gsd/pr-branch.md",
+      "bytes": 437,
+      "estimated_tokens": 110,
+      "category": "commands",
+      "namespace": "gsd"
+    },
+    {
+      "path": ".claude/commands/gsd/ship.md",
+      "bytes": 445,
+      "estimated_tokens": 112,
+      "category": "commands",
+      "namespace": "gsd"
+    },
+    {
+      "path": ".claude/commands/guard.md",
+      "bytes": 629,
+      "estimated_tokens": 158,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/health-check.md",
+      "bytes": 1309,
+      "estimated_tokens": 328,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/incident-response.md",
+      "bytes": 1497,
+      "estimated_tokens": 375,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/install-browser-skills.md",
+      "bytes": 937,
+      "estimated_tokens": 235,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/pm-delivery-loop.md",
+      "bytes": 1278,
+      "estimated_tokens": 320,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/pm-discover.md",
+      "bytes": 831,
+      "estimated_tokens": 208,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/pm-intake.md",
+      "bytes": 2868,
+      "estimated_tokens": 717,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/pm-plan-roadmap.md",
+      "bytes": 995,
+      "estimated_tokens": 249,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/pm-prioritize.md",
+      "bytes": 653,
+      "estimated_tokens": 164,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/pm-story.md",
+      "bytes": 924,
+      "estimated_tokens": 231,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/pm-strategy.md",
+      "bytes": 681,
+      "estimated_tokens": 171,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/pm-to-build.md",
+      "bytes": 3351,
+      "estimated_tokens": 838,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/pm-write-prd.md",
+      "bytes": 1131,
+      "estimated_tokens": 283,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/pr-feedback-loop.md",
+      "bytes": 1932,
+      "estimated_tokens": 483,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/qa-only.md",
+      "bytes": 978,
+      "estimated_tokens": 245,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/qc-verify-ui.md",
+      "bytes": 2155,
+      "estimated_tokens": 539,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/review.md",
+      "bytes": 1702,
+      "estimated_tokens": 426,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/rollback.md",
+      "bytes": 1411,
+      "estimated_tokens": 353,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/secrets-scan.md",
+      "bytes": 913,
+      "estimated_tokens": 229,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/security-scan.md",
+      "bytes": 1497,
+      "estimated_tokens": 375,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/setup-doctor.md",
+      "bytes": 1025,
+      "estimated_tokens": 257,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/setup-monitoring.md",
+      "bytes": 1274,
+      "estimated_tokens": 319,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/unfreeze.md",
+      "bytes": 355,
+      "estimated_tokens": 89,
+      "category": "commands",
+      "namespace": "local"
+    },
+    {
+      "path": ".claude/commands/unguard.md",
+      "bytes": 449,
+      "estimated_tokens": 113,
+      "category": "commands",
+      "namespace": "local"
+    }
+  ],
+  "top_heavy_files": [
+    {
+      "path": ".claude/pm/skills/epic-breakdown-advisor/SKILL.md",
+      "bytes": 23431,
+      "estimated_tokens": 5803,
+      "category": "pm_assets"
+    },
+    {
+      "path": ".claude/pm/skills/prd-development/SKILL.md",
+      "bytes": 23079,
+      "estimated_tokens": 5741,
+      "category": "pm_assets"
+    },
+    {
+      "path": ".claude/scripts/security_scan.py",
+      "bytes": 18713,
+      "estimated_tokens": 4679,
+      "category": "scripts"
+    },
+    {
+      "path": ".claude/pm/skills/discovery-process/SKILL.md",
+      "bytes": 18874,
+      "estimated_tokens": 4669,
+      "category": "pm_assets"
+    },
+    {
+      "path": ".claude/pm/skills/roadmap-planning/SKILL.md",
+      "bytes": 18398,
+      "estimated_tokens": 4548,
+      "category": "pm_assets"
+    },
+    {
+      "path": ".claude/pm/skills/positioning-workshop/SKILL.md",
+      "bytes": 17571,
+      "estimated_tokens": 4372,
+      "category": "pm_assets"
+    },
+    {
+      "path": ".claude/pm/skills/opportunity-solution-tree/SKILL.md",
+      "bytes": 16815,
+      "estimated_tokens": 4189,
+      "category": "pm_assets"
+    },
+    {
+      "path": ".claude/pm/skills/prioritization-advisor/SKILL.md",
+      "bytes": 16247,
+      "estimated_tokens": 4036,
+      "category": "pm_assets"
+    },
+    {
+      "path": ".claude/pm/skills/product-strategy-session/SKILL.md",
+      "bytes": 15597,
+      "estimated_tokens": 3861,
+      "category": "pm_assets"
+    },
+    {
+      "path": ".claude/scripts/atlassian_cli.py",
+      "bytes": 15172,
+      "estimated_tokens": 3793,
+      "category": "scripts"
+    },
+    {
+      "path": ".claude/scripts/health_check.py",
+      "bytes": 11886,
+      "estimated_tokens": 2972,
+      "category": "scripts"
+    },
+    {
+      "path": ".claude/pm/skills/user-story-splitting/SKILL.md",
+      "bytes": 11606,
+      "estimated_tokens": 2896,
+      "category": "pm_assets"
+    }
+  ]
+}
