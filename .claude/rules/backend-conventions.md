@@ -149,6 +149,16 @@ public ResponseEntity<ApiResponse<UsageDto.Response>> getHistory(
 
 - 테스트 없는 기능 구현 금지.
 
+### TDD 순서 철칙 (domain/API 구현 시 반드시 준수)
+
+```
+RepositoryTest → Repository(+Entity) → ServiceTest → Service → ControllerTest → Controller(+DTO)
+```
+
+- 각 단계는 반드시 **테스트 먼저 작성 → RED → 최소 구현 → GREEN → 리팩터** 순서.
+- 프로덕션 코드는 실패하는 테스트 없이 작성하지 않는다.
+- 위반 시 즉시 중단 후 삭제 또는 보충 테스트로 복구. 세부 절차는 `.claude/rules/testing.md` 참조.
+
 ---
 
 ## 디자인 패턴 적용 규칙
