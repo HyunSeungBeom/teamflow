@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:teamflow-test;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;NON_KEYWORDS=USER,KEY
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+  flyway:
+    enabled: false
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+      - org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration
+
+app:
+  jwt:
+    secret: test-secret-key-must-be-at-least-256-bits-long-aaaaaaaaaa
+    access-token-ttl-seconds: 900
+    refresh-token-ttl-seconds: 604800
+  google-oauth:
+    client-id: test-client
+    client-secret: test-secret
+    token-uri: https://oauth2.googleapis.com/token
