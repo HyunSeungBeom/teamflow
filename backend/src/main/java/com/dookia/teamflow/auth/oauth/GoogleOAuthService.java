@@ -6,6 +6,7 @@ import com.dookia.teamflow.auth.exception.AuthException;
 import com.dookia.teamflow.user.entity.UserProvider;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -29,17 +30,12 @@ import java.util.Map;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class GoogleOAuthService implements OAuthProvider {
 
     private final GoogleOAuthProperties properties;
     private final RestClient restClient;
     private final ObjectMapper objectMapper;
-
-    public GoogleOAuthService(GoogleOAuthProperties properties) {
-        this.properties = properties;
-        this.restClient = RestClient.create();
-        this.objectMapper = new ObjectMapper();
-    }
 
     @Override
     public UserProvider provider() {
