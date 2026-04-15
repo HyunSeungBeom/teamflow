@@ -2,6 +2,8 @@ server:
   port: ${PORT:8082}
 
 spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
   application:
     name: teamflow-api
   datasource:
@@ -57,15 +59,5 @@ app:
     access-token-ttl-seconds: 900         # 15분 (auth-design §2.1)
     refresh-token-ttl-seconds: 604800     # 7일  (auth-design §2.2)
   google-oauth:
-    client-id: ${GOOGLE_CLIENT_ID:}
-    client-secret: ${GOOGLE_CLIENT_SECRET:}
     token-uri: https://oauth2.googleapis.com/token
-
----
-# 로컬 개발 프로파일
-spring:
-  config:
-    activate:
-      on-profile: local
-  jpa:
-    show-sql: true
+    # client-id / client-secret 는 application-{profile}.yml 에서 주입
