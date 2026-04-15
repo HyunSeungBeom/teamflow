@@ -1,0 +1,83 @@
+name: Backend CD
+
+on:
+  workflow_run:
+    workflows: ['Backend CI']
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:   # 수동 배포용
+
+concurrency:
+  group: backend-cd
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to Render
+    if: >-
+      ${{
+        github.event_name == 'workflow_dispatch' ||
+        (github.event.workflow_run.conclusion == 'success' &&
+         github.event.workflow_run.head_branch == 'main')
+      }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render deploy
+        id: trigger
+        env:
+          HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: |
+          RESPONSE=$(curl -sS -X POST "$HOOK" -H "Accept: application/json" --fail)
+          echo "Response: $RESPONSE"
+          DEPLOY_ID=$(echo "$RESPONSE" | jq -r '.deploy.id')
+          if [ -z "$DEPLOY_ID" ] || [ "$DEPLOY_ID" = "null" ]; then
+            echo "::error::Deploy ID not found in hook response"
+            exit 1
+          fi
+          echo "deploy_id=$DEPLOY_ID" >> "$GITHUB_OUTPUT"
+          echo "Triggered deploy: $DEPLOY_ID"
+
+      - name: Wait for deploy to finish
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+          DEPLOY_ID: ${{ steps.trigger.outputs.deploy_id }}
+        run: |
+          MAX_ATTEMPTS=90      # 90 * 10s = 15분 타임아웃
+          for i in $(seq 1 $MAX_ATTEMPTS); do
+            RESP=$(curl -sS \
+              -H "Authorization: Bearer $RENDER_API_KEY" \
+              -H "Accept: application/json" \
+              "https://api.render.com/v1/services/$SERVICE_ID/deploys/$DEPLOY_ID")
+            STATUS=$(echo "$RESP" | jq -r '.status')
+            echo "[$i/$MAX_ATTEMPTS] status=$STATUS"
+
+            case "$STATUS" in
+              live)
+                echo "✅ Deploy succeeded"
+                exit 0
+                ;;
+              build_failed|update_failed|canceled|deactivated|pre_deploy_failed)
+                echo "::error::Deploy failed with status: $STATUS"
+                echo "$RESP" | jq .
+                exit 1
+                ;;
+              created|build_in_progress|update_in_progress|pre_deploy_in_progress)
+                sleep 10
+                ;;
+              *)
+                echo "::warning::Unknown status: $STATUS (계속 대기)"
+                sleep 10
+                ;;
+            esac
+          done
+          echo "::error::Timeout after $MAX_ATTEMPTS attempts"
+          exit 1
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### Render Deploy" >> $GITHUB_STEP_SUMMARY
+          echo "- Deploy ID: \`${{ steps.trigger.outputs.deploy_id }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Service: \`${{ secrets.RENDER_SERVICE_ID }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- URL: https://dashboard.render.com/web/${{ secrets.RENDER_SERVICE_ID }}/deploys/${{ steps.trigger.outputs.deploy_id }}" >> $GITHUB_STEP_SUMMARY
