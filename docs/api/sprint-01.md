@@ -1,6 +1,9 @@
 # TeamFlow API — Sprint 01
 
-> **Base URL**: `http://localhost:8082`
+> **Base URL**
+> - 로컬: `http://localhost:8082`
+> - 운영(Render): `https://teamflow-6szr.onrender.com`
+>
 > **버전**: v1
 > **출처**: `/v3/api-docs` (OpenAPI 3.0.1) + 실제 DTO 코드 보정
 > **범위**: Sprint 1 (인증 + 워크스페이스/프로젝트 허브)
@@ -23,7 +26,7 @@
 
 ### 1.2 인증 불필요 엔드포인트
 
-- `POST /api/auth/google`
+- `POST /api/auth/oauth/{provider}`
 - `POST /api/auth/refresh` (Cookie 기반)
 - `POST /api/auth/logout`
 
@@ -83,14 +86,20 @@
 
 ## 3. 인증 도메인 (`/api/auth`)
 
-### 3.1 `POST /api/auth/google` — Google OAuth 로그인/회원가입
+### 3.1 `POST /api/auth/oauth/{provider}` — OAuth 로그인/회원가입
+
+**Path**
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| `provider` | enum | 현재 지원: `GOOGLE` (네이버 등은 추후 추가) |
 
 **요청 Body**
 
 | 필드 | 타입 | 필수 | 설명 |
 |------|------|------|------|
-| `code` | string | ✓ | Google Authorization Code |
-| `redirectUri` | string | ✓ | 프론트의 리다이렉트 URI (Google 콘솔 등록값) |
+| `code` | string | ✓ | provider Authorization Code |
+| `redirectUri` | string | ✓ | 프론트의 리다이렉트 URI (provider 콘솔 등록값) |
 
 ```json
 {
@@ -123,8 +132,9 @@
 | HTTP | code | 상황 |
 |------|------|------|
 | 400 | `AUTH_MISSING_CODE` | `code` 누락 |
-| 400 | `AUTH_INVALID_CODE` | Google 토큰 교환 실패 (잘못된 code) |
-| 502 | `AUTH_GOOGLE_ERROR` | Google 서버 통신 실패 |
+| 400 | `AUTH_INVALID_CODE` | provider 토큰 교환 실패 (잘못된 code) |
+| 400 | `AUTH_UNSUPPORTED_PROVIDER` | path `provider` 미지원 |
+| 502 | `AUTH_GOOGLE_ERROR` | 외부 OAuth 서버 통신 실패 |
 
 ---
 
@@ -309,17 +319,9 @@
 | 필드 | 타입 | 제약 |
 |------|------|------|
 | `name` | string | 2~100자 (필수) |
-| `key` | string | `^[A-Z][A-Z0-9]{1,9}$` 2~10자 대문자/숫자, 첫 글자 대문자 (필수) |
-| `description` | string | 최대 500자 (선택) |
-| `visibility` | enum | `PUBLIC` 또는 `PRIVATE` (선택, 기본 `PRIVATE`) |
 
 ```json
-{
-  "name": "TeamFlow",
-  "key": "TF",
-  "description": "프로젝트 관리 도구 MVP",
-  "visibility": "PRIVATE"
-}
+{ "name": "TeamFlow" }
 ```
 
 **응답 201 Created**
@@ -329,29 +331,25 @@
   "success": true,
   "data": {
     "no": 50,
-    "workspaceNo": 10,
     "name": "TeamFlow",
-    "key": "TF",
-    "description": "프로젝트 관리 도구 MVP",
-    "icon": null,
-    "color": null,
-    "visibility": "PRIVATE",
-    "status": "ACTIVE"
+    "slug": "teamflow-3f2b1c8a",
+    "role": "OWNER",
+    "memberCount": 1
   }
 }
 ```
 
 - 생성자는 자동으로 `OWNER` 프로젝트 멤버로 등록.
-- `key` 는 해당 워크스페이스 내에서 unique (티켓 key 접두사, 예: `TF-1`).
+- `slug` = `slugify(name) + '-' + UUID 앞 8자` (워크스페이스 내 유일).
+- 응답 구조는 워크스페이스 생성과 동일하다 (`Response`).
 
 **에러**
 
 | HTTP | 상황 |
 |------|------|
-| 400 | Validation (name/key 패턴, visibility enum) |
+| 400 | Validation (name 길이) |
 | 403 | 호출자가 워크스페이스 멤버가 아님 |
 | 404 | 워크스페이스 없음 |
-| 409 | 같은 워크스페이스에 동일 `key` 가 이미 존재 |
 
 ---
 
@@ -363,27 +361,14 @@
 {
   "success": true,
   "data": [
-    {
-      "no": 50,
-      "workspaceNo": 10,
-      "name": "TeamFlow",
-      "key": "TF",
-      "description": "프로젝트 관리 도구 MVP",
-      "memberCount": 3
-    },
-    {
-      "no": 51,
-      "workspaceNo": 10,
-      "name": "Design System",
-      "key": "DS",
-      "description": null,
-      "memberCount": 2
-    }
+    { "no": 50, "name": "TeamFlow",      "slug": "teamflow-3f2b1c8a", "memberCount": 3 },
+    { "no": 51, "name": "Design System", "slug": "design-system-b7e9", "memberCount": 2 }
   ]
 }
 ```
 
-- `createDate DESC` 정렬 (최신순)
+- 응답 항목 구조는 워크스페이스 목록과 동일하다 (`SummaryResponse`).
+- 정렬: 최신순 (`createDate DESC`).
 
 **에러**
 
@@ -398,7 +383,7 @@
 
 **Path**: `projectNo: long`
 
-**응답 200**: 5.1 응답과 동일 구조
+**응답 200**: 5.1 응답과 동일 구조 (`Response`).
 
 **에러**
 
@@ -436,27 +421,15 @@
 | `EXPIRED` | TTL 경과로 자동 만료 |
 | `REVOKED` | 초대자가 취소 |
 
-### 6.4 `ProjectVisibility`
-
-| 값 | 의미 |
-|----|------|
-| `PUBLIC` | 워크스페이스 멤버 전체 공개 |
-| `PRIVATE` | `ProjectMember` 만 접근 가능 (기본) |
-
-### 6.5 `ProjectStatus`
-
-| 값 | 의미 |
-|----|------|
-| `ACTIVE` | 진행 중, 편집 가능 (기본) |
-| `COMPLETED` | 완료, 읽기 전용 |
-
-### 6.6 `ProjectMemberRole`
+### 6.4 `ProjectMemberRole`
 
 | 값 | 권한 |
 |----|------|
 | `OWNER` | 프로젝트 전권 |
 | `MEMBER` | 편집자 |
-| `VIEWER` | 읽기 전용 |
+| `GUEST` | 제한 접근 |
+
+> Sprint 1 범위에서 `visibility`/`status` 는 API 응답에서 제외되었다. 추후 스프린트에서 노출 시 별도 문서화한다.
 
 ---
 
@@ -464,9 +437,10 @@
 
 | `code` | HTTP | 상황 |
 |--------|------|------|
-| `AUTH_MISSING_CODE` | 400 | Google OAuth `code` 누락 |
-| `AUTH_INVALID_CODE` | 400 | `code` 로 Google 토큰 교환 실패 |
-| `AUTH_GOOGLE_ERROR` | 502 | Google 서버 통신 오류 |
+| `AUTH_MISSING_CODE` | 400 | OAuth `code` 누락 |
+| `AUTH_INVALID_CODE` | 400 | `code` 로 provider 토큰 교환 실패 |
+| `AUTH_UNSUPPORTED_PROVIDER` | 400 | path `provider` 미지원 |
+| `AUTH_GOOGLE_ERROR` | 502 | 외부 OAuth 서버 통신 오류 |
 | `AUTH_TOKEN_MISSING` | 401 | 토큰 누락 |
 | `AUTH_TOKEN_EXPIRED` | 401 | 토큰 만료 |
 | `AUTH_TOKEN_INVALID` | 401 | 토큰 변조/DB에 없음 |
@@ -495,5 +469,10 @@
 - 백엔드 컨벤션: `.claude/rules/backend-conventions.md`
 - 인증 설계 상세: `docs/auth-design.md` (해당 파일이 있다면)
 
-Swagger UI (로컬): http://localhost:8082/swagger-ui/index.html
-OpenAPI JSON (로컬): http://localhost:8082/v3/api-docs
+Swagger UI
+- 로컬: http://localhost:8082/swagger-ui/index.html
+- 운영: https://teamflow-6szr.onrender.com/swagger-ui/index.html
+
+OpenAPI JSON
+- 로컬: http://localhost:8082/v3/api-docs
+- 운영: https://teamflow-6szr.onrender.com/v3/api-docs
