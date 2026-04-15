@@ -4,6 +4,7 @@ import { useAuthStore, authApi } from '@/features/auth'
 export function AuthProvider({ children }: { children: ReactNode }) {
   const setAuth = useAuthStore((s) => s.setAuth)
   const clearAuth = useAuthStore((s) => s.clearAuth)
+  const setLoading = useAuthStore((s) => s.setLoading)
 
   useEffect(() => {
     const restoreAuth = async () => {
@@ -16,12 +17,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           clearAuth()
         }
       } catch {
+        // refresh 실패 = 로그인 안 된 상태 → 바로 로딩 해제
         clearAuth()
       }
     }
 
     restoreAuth()
-  }, [setAuth, clearAuth])
+  }, [setAuth, setLoading, clearAuth])
 
   return <>{children}</>
 }

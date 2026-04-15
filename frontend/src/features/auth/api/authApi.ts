@@ -20,6 +20,7 @@ export const authApi = {
   refresh: () =>
     axios.post<RefreshResponse>(`${env.apiBaseUrl}/api/auth/refresh`, null, {
       withCredentials: true,
+      timeout: 5000,
     }),
 
   logout: () =>
