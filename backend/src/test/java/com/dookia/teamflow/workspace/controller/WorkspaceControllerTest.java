@@ -2,6 +2,7 @@ package com.dookia.teamflow.workspace.controller;
 
 import com.dookia.teamflow.auth.service.JwtService;
 import com.dookia.teamflow.workspace.dto.WorkspaceDto;
+import com.dookia.teamflow.workspace.entity.Workspace;
 import com.dookia.teamflow.workspace.entity.WorkspaceInvitationStatus;
 import com.dookia.teamflow.workspace.entity.WorkspaceMemberRole;
 import com.dookia.teamflow.workspace.service.WorkspaceService;
@@ -18,6 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -120,10 +122,10 @@ class WorkspaceControllerTest {
             .andExpect(jsonPath("$.data.token", equalTo("token-xyz")));
     }
 
-    private static com.dookia.teamflow.workspace.entity.Workspace workspaceStub() {
-        var ws = com.dookia.teamflow.workspace.entity.Workspace.create("Alpha");
+    private static Workspace workspaceStub() {
+        Workspace ws = Workspace.create("Alpha");
         try {
-            var f = com.dookia.teamflow.workspace.entity.Workspace.class.getDeclaredField("no");
+            Field f = Workspace.class.getDeclaredField("no");
             f.setAccessible(true);
             f.set(ws, 10L);
         } catch (ReflectiveOperationException e) {

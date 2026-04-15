@@ -1,6 +1,6 @@
 package com.dookia.teamflow.workspace.service;
 
-import com.dookia.teamflow.common.exception.EntityNotFoundException;
+import com.dookia.teamflow.exception.EntityNotFoundException;
 import com.dookia.teamflow.user.repository.UserRepository;
 import com.dookia.teamflow.workspace.dto.WorkspaceDto;
 import com.dookia.teamflow.workspace.entity.Workspace;
@@ -67,7 +67,7 @@ class WorkspaceServiceTest {
         given(workspaceRepository.findById(5L)).willReturn(Optional.of(ws));
         given(workspaceMemberRepository.countByWorkspaceNo(5L)).willReturn(3L);
 
-        var list = workspaceService.listForUser(1L);
+        List<WorkspaceDto.SummaryResponse> list = workspaceService.listForUser(1L);
 
         assertThat(list).hasSize(1);
         assertThat(list.get(0).no()).isEqualTo(5L);

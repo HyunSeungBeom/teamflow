@@ -1,6 +1,6 @@
 package com.dookia.teamflow.project.service;
 
-import com.dookia.teamflow.common.exception.EntityNotFoundException;
+import com.dookia.teamflow.exception.EntityNotFoundException;
 import com.dookia.teamflow.project.dto.ProjectDto;
 import com.dookia.teamflow.project.entity.Project;
 import com.dookia.teamflow.project.entity.ProjectMember;
@@ -106,7 +106,7 @@ class ProjectServiceTest {
         given(projectMemberRepository.countByProjectNo(10L)).willReturn(1L);
         given(projectMemberRepository.countByProjectNo(11L)).willReturn(2L);
 
-        var list = projectService.listInWorkspace(1L, 2L);
+        List<ProjectDto.SummaryResponse> list = projectService.listInWorkspace(1L, 2L);
 
         assertThat(list).hasSize(2);
         assertThat(list.get(0).memberCount()).isEqualTo(1L);
