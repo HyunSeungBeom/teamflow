@@ -61,3 +61,6 @@ app:
   google-oauth:
     token-uri: https://oauth2.googleapis.com/token
     # client-id / client-secret 는 application-{profile}.yml 에서 주입
+  cors:
+    # 콤마 구분 또는 yml list. 환경별로 application-{profile}.yml 에서 override.
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}

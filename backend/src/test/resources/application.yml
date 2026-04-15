@@ -28,3 +28,5 @@ app:
     client-id: test-client
     client-secret: test-secret
     token-uri: https://oauth2.googleapis.com/token
+  cors:
+    allowed-origins: http://localhost:5173
