@@ -10,10 +10,7 @@ import jakarta.validation.constraints.NotBlank;
  */
 public class AuthDto {
 
-    private AuthDto() {
-    }
-
-    public record GoogleLoginRequest(
+    public record OAuthLoginRequest(
         @NotBlank(message = "code는 필수입니다.") String code,
         @NotBlank(message = "redirectUri는 필수입니다.") String redirectUri
     ) {}

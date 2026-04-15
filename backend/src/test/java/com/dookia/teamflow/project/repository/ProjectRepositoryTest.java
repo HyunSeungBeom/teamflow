@@ -6,6 +6,7 @@ import com.dookia.teamflow.project.entity.ProjectMemberRole;
 import com.dookia.teamflow.project.entity.ProjectStatus;
 import com.dookia.teamflow.project.entity.ProjectVisibility;
 import com.dookia.teamflow.user.entity.User;
+import com.dookia.teamflow.user.entity.UserProvider;
 import com.dookia.teamflow.user.repository.UserRepository;
 import com.dookia.teamflow.workspace.entity.Workspace;
 import com.dookia.teamflow.workspace.repository.WorkspaceRepository;
@@ -15,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -68,7 +71,7 @@ class ProjectRepositoryTest {
         em.flush();
         em.clear();
 
-        var list = projectRepository.findAllByWorkspaceNoOrderByCreateDateDesc(ws.getNo());
+        List<Project> list = projectRepository.findAllByWorkspaceNoOrderByCreateDateDesc(ws.getNo());
         assertThat(list).extracting(Project::getKey).containsExactly(second.getKey(), first.getKey());
     }
 
@@ -77,7 +80,7 @@ class ProjectRepositoryTest {
     void projectMember_count() {
         Workspace ws = workspaceRepository.save(Workspace.create("W"));
         Project project = projectRepository.save(Project.create(ws.getNo(), "P", "PK", null, null));
-        User owner = userRepository.save(User.createFromGoogle("s", "o@x.com", "O", null));
+        User owner = userRepository.save(User.createFromOAuth(UserProvider.GOOGLE, "s", "o@x.com", "O", null));
 
         projectMemberRepository.save(ProjectMember.of(project.getNo(), owner.getNo(), ProjectMemberRole.OWNER));
         em.flush();

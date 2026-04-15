@@ -27,6 +27,7 @@ import java.time.LocalDateTime;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -58,11 +59,11 @@ class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/auth/google 성공 → 200 + Set-Cookie(teamflow_rt) + AuthResponse 본문")
-    void googleLogin_success() throws Exception {
+    @DisplayName("POST /api/auth/oauth/google 성공 → 200 + Set-Cookie(teamflow_rt) + AuthResponse 본문")
+    void oauthLogin_google_success() throws Exception {
         long userNo = 123L;
         User user = userWithNo(userNo, "g-1", "a@b.com", "홍길동");
-        given(authService.login(any(AuthDto.GoogleLoginRequest.class), any(), any()))
+        given(authService.oauthLogin(eq(UserProvider.GOOGLE), any(AuthDto.OAuthLoginRequest.class), any(), any()))
             .willReturn(new AuthService.LoginResult(
                 "access.jwt.token",
                 "plain-refresh-token",
@@ -71,9 +72,9 @@ class AuthControllerTest {
                 LocalDateTime.now().plusDays(7)
             ));
 
-        var body = new AuthDto.GoogleLoginRequest("auth-code", "http://localhost:5173/auth/callback");
+        AuthDto.OAuthLoginRequest body = new AuthDto.OAuthLoginRequest("auth-code", "http://localhost:5173/auth/callback");
 
-        mockMvc.perform(post("/api/auth/google")
+        mockMvc.perform(post("/api/auth/oauth/google")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(body)))
             .andExpect(status().isOk())
@@ -88,9 +89,9 @@ class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/auth/google 요청 body 누락 → 400")
-    void googleLogin_missingCode_returns400() throws Exception {
-        mockMvc.perform(post("/api/auth/google")
+    @DisplayName("POST /api/auth/oauth/google 요청 body 누락 → 400")
+    void oauthLogin_missingCode_returns400() throws Exception {
+        mockMvc.perform(post("/api/auth/oauth/google")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"redirectUri\":\"http://localhost\"}"))
             .andExpect(status().isBadRequest());
@@ -120,7 +121,7 @@ class AuthControllerTest {
     }
 
     private static User userWithNo(long no, String googleSub, String email, String name) {
-        User user = User.createFromGoogle(googleSub, email, name, null);
+        User user = User.createFromOAuth(UserProvider.GOOGLE, googleSub, email, name, null);
         try {
             Field noField = User.class.getDeclaredField("no");
             noField.setAccessible(true);

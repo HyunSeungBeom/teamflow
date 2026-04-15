@@ -2,10 +2,13 @@ package com.dookia.teamflow.auth.service;
 
 import com.dookia.teamflow.auth.config.JwtProperties;
 import com.dookia.teamflow.auth.dto.AuthDto;
+import com.dookia.teamflow.auth.entity.RefreshToken;
 import com.dookia.teamflow.auth.exception.AuthErrorCode;
 import com.dookia.teamflow.auth.exception.AuthException;
-import com.dookia.teamflow.token.entity.RefreshToken;
-import com.dookia.teamflow.token.repository.RefreshTokenRepository;
+import com.dookia.teamflow.auth.oauth.OAuthProvider;
+import com.dookia.teamflow.auth.oauth.OAuthProviderRegistry;
+import com.dookia.teamflow.auth.oauth.OAuthUserInfo;
+import com.dookia.teamflow.auth.repository.RefreshTokenRepository;
 import com.dookia.teamflow.user.entity.User;
 import com.dookia.teamflow.user.entity.UserProvider;
 import com.dookia.teamflow.user.repository.UserRepository;
@@ -29,7 +32,7 @@ import java.util.UUID;
  * 인증 핵심 비즈니스 로직. auth-design.md §1~§2, ERD v0.1 §1 을 구현한다.
  *
  * <ul>
- *   <li>{@link #login} — Google OAuth 로그인/회원가입</li>
+ *   <li>{@link #oauthLogin} — OAuth 제공자(Google/Naver/Kakao …) 로그인/회원가입</li>
  *   <li>{@link #refresh} — Token Rotation + Replay Detection</li>
  *   <li>{@link #logout} — Refresh Token 폐기</li>
  * </ul>
@@ -45,27 +48,29 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final GoogleOAuthService googleOAuthService;
+    private final OAuthProviderRegistry oauthProviderRegistry;
     private final JwtService jwtService;
     private final JwtProperties jwtProperties;
 
-    public LoginResult login(AuthDto.GoogleLoginRequest request, String userAgent, String ipAddress) {
-        var googleUser = googleOAuthService.exchangeCodeForUser(request.code(), request.redirectUri());
+    public LoginResult oauthLogin(UserProvider provider, AuthDto.OAuthLoginRequest request, String userAgent, String ipAddress) {
+        OAuthProvider oauth = oauthProviderRegistry.get(provider);
+        OAuthUserInfo oauthUser = oauth.exchangeCodeForUser(request.code(), request.redirectUri());
 
-        Optional<User> existing = userRepository.findByProviderAndProviderId(UserProvider.GOOGLE, googleUser.sub());
+        Optional<User> existing = userRepository.findByProviderAndProviderId(provider, oauthUser.providerId());
         boolean isNewUser = existing.isEmpty();
 
         User user = existing.orElseGet(() -> userRepository.save(
-            User.createFromGoogle(
-                googleUser.sub(),
-                googleUser.email(),
-                googleUser.name(),
-                googleUser.picture()
+            User.createFromOAuth(
+                provider,
+                oauthUser.providerId(),
+                oauthUser.email(),
+                oauthUser.name(),
+                oauthUser.picture()
             )
         ));
 
         if (!isNewUser) {
-            user.updateProfile(googleUser.name(), googleUser.picture());
+            user.updateProfile(oauthUser.name(), oauthUser.picture());
         }
 
         String accessToken = jwtService.issueAccessToken(user);

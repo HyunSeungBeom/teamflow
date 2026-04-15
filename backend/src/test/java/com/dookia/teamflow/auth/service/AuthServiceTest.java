@@ -2,10 +2,13 @@ package com.dookia.teamflow.auth.service;
 
 import com.dookia.teamflow.auth.config.JwtProperties;
 import com.dookia.teamflow.auth.dto.AuthDto;
+import com.dookia.teamflow.auth.entity.RefreshToken;
 import com.dookia.teamflow.auth.exception.AuthErrorCode;
 import com.dookia.teamflow.auth.exception.AuthException;
-import com.dookia.teamflow.token.entity.RefreshToken;
-import com.dookia.teamflow.token.repository.RefreshTokenRepository;
+import com.dookia.teamflow.auth.oauth.OAuthProvider;
+import com.dookia.teamflow.auth.oauth.OAuthProviderRegistry;
+import com.dookia.teamflow.auth.oauth.OAuthUserInfo;
+import com.dookia.teamflow.auth.repository.RefreshTokenRepository;
 import com.dookia.teamflow.user.entity.User;
 import com.dookia.teamflow.user.entity.UserProvider;
 import com.dookia.teamflow.user.repository.UserRepository;
@@ -20,6 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.lang.reflect.Field;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
@@ -37,30 +41,34 @@ class AuthServiceTest {
 
     @Mock private UserRepository userRepository;
     @Mock private RefreshTokenRepository refreshTokenRepository;
-    @Mock private GoogleOAuthService googleOAuthService;
+    @Mock private OAuthProvider googleProvider;
     @Mock private JwtService jwtService;
 
     private JwtProperties jwtProperties;
+    private OAuthProviderRegistry oauthProviderRegistry;
     private AuthService authService;
     private final AtomicLong idSeq = new AtomicLong(1);
 
     @BeforeEach
     void setUp() {
+        given(googleProvider.provider()).willReturn(UserProvider.GOOGLE);
+        oauthProviderRegistry = new OAuthProviderRegistry(List.of(googleProvider));
+
         jwtProperties = new JwtProperties(
             "test-secret-key-must-be-at-least-256-bits-long-aaaaaaaaaa",
             900,
             604800
         );
         authService = new AuthService(
-            userRepository, refreshTokenRepository, googleOAuthService, jwtService, jwtProperties
+            userRepository, refreshTokenRepository, oauthProviderRegistry, jwtService, jwtProperties
         );
     }
 
     @Test
-    @DisplayName("신규 사용자 Google 로그인 → user 저장 + isNewUser=true")
-    void login_newUser_createsUserAndReturnsIsNewUserTrue() {
-        var googleInfo = new GoogleOAuthService.GoogleUserInfo("g-123", "new@x.com", "신규", "http://pic");
-        given(googleOAuthService.exchangeCodeForUser("code", "uri")).willReturn(googleInfo);
+    @DisplayName("신규 사용자 OAuth(Google) 로그인 → user 저장 + isNewUser=true")
+    void oauthLogin_newUser_createsUserAndReturnsIsNewUserTrue() {
+        OAuthUserInfo oauthUser = new OAuthUserInfo("g-123", "new@x.com", "신규", "http://pic");
+        given(googleProvider.exchangeCodeForUser("code", "uri")).willReturn(oauthUser);
         given(userRepository.findByProviderAndProviderId(UserProvider.GOOGLE, "g-123")).willReturn(Optional.empty());
         given(userRepository.save(any(User.class))).willAnswer(inv -> {
             User u = inv.getArgument(0);
@@ -69,8 +77,9 @@ class AuthServiceTest {
         });
         given(jwtService.issueAccessToken(any(User.class))).willReturn("access.jwt.token");
 
-        var result = authService.login(
-            new AuthDto.GoogleLoginRequest("code", "uri"),
+        AuthService.LoginResult result = authService.oauthLogin(
+            UserProvider.GOOGLE,
+            new AuthDto.OAuthLoginRequest("code", "uri"),
             "UA", "1.2.3.4"
         );
 
@@ -82,17 +91,18 @@ class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("기존 사용자 Google 로그인 → 프로필 갱신 + isNewUser=false")
-    void login_existingUser_updatesProfile() {
+    @DisplayName("기존 사용자 OAuth(Google) 로그인 → 프로필 갱신 + isNewUser=false")
+    void oauthLogin_existingUser_updatesProfile() {
         long userNo = 42L;
         User existing = userWithNo(userNo, "g-999", "old@x.com", "기존");
-        var googleInfo = new GoogleOAuthService.GoogleUserInfo("g-999", "old@x.com", "기존 갱신", "http://pic2");
-        given(googleOAuthService.exchangeCodeForUser("code", "uri")).willReturn(googleInfo);
+        OAuthUserInfo oauthUser = new OAuthUserInfo("g-999", "old@x.com", "기존 갱신", "http://pic2");
+        given(googleProvider.exchangeCodeForUser("code", "uri")).willReturn(oauthUser);
         given(userRepository.findByProviderAndProviderId(UserProvider.GOOGLE, "g-999")).willReturn(Optional.of(existing));
         given(jwtService.issueAccessToken(existing)).willReturn("access.jwt.token");
 
-        var result = authService.login(
-            new AuthDto.GoogleLoginRequest("code", "uri"),
+        AuthService.LoginResult result = authService.oauthLogin(
+            UserProvider.GOOGLE,
+            new AuthDto.OAuthLoginRequest("code", "uri"),
             "UA", "1.2.3.4"
         );
 
@@ -124,7 +134,7 @@ class AuthServiceTest {
         given(userRepository.findById(userNo)).willReturn(Optional.of(user));
         given(jwtService.issueAccessToken(user)).willReturn("new.access.token");
 
-        var result = authService.refresh(plain, "UA", "1.2.3.4");
+        AuthService.RefreshResult result = authService.refresh(plain, "UA", "1.2.3.4");
 
         assertThat(stored.isUsed()).isTrue();
         assertThat(result.accessToken()).isEqualTo("new.access.token");
@@ -232,7 +242,7 @@ class AuthServiceTest {
 
     private static String sha256Hex(String input) {
         try {
-            var md = java.security.MessageDigest.getInstance("SHA-256");
+            java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA-256");
             byte[] digest = md.digest(input.getBytes(java.nio.charset.StandardCharsets.UTF_8));
             return java.util.HexFormat.of().formatHex(digest);
         } catch (java.security.NoSuchAlgorithmException e) {
@@ -241,7 +251,7 @@ class AuthServiceTest {
     }
 
     private static User userWithNo(long no, String googleSub, String email, String name) {
-        User user = User.createFromGoogle(googleSub, email, name, null);
+        User user = User.createFromOAuth(UserProvider.GOOGLE, googleSub, email, name, null);
         injectNo(user, no);
         return user;
     }

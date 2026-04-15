@@ -11,6 +11,7 @@ public enum AuthErrorCode {
 
     AUTH_MISSING_CODE(HttpStatus.BAD_REQUEST, "code 파라미터가 필요합니다."),
     AUTH_INVALID_CODE(HttpStatus.BAD_REQUEST, "Authorization code가 유효하지 않습니다."),
+    AUTH_UNSUPPORTED_PROVIDER(HttpStatus.BAD_REQUEST, "지원하지 않는 OAuth 제공자입니다."),
     AUTH_GOOGLE_ERROR(HttpStatus.BAD_GATEWAY, "Google 서버 통신에 실패했습니다."),
 
     AUTH_TOKEN_MISSING(HttpStatus.UNAUTHORIZED, "인증 토큰이 없습니다."),
