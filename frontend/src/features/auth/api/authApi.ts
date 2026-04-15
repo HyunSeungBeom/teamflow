@@ -15,11 +15,12 @@ interface RefreshResponse {
 
 export const authApi = {
   loginWithGoogle: (code: string, redirectUri: string) =>
-    apiClient.post<AuthResponse>('/api/auth/google', { code, redirectUri }),
+    apiClient.post<AuthResponse>('/api/auth/oauth/GOOGLE', { code, redirectUri }),
 
   refresh: () =>
     axios.post<RefreshResponse>(`${env.apiBaseUrl}/api/auth/refresh`, null, {
       withCredentials: true,
+      timeout: 5000,
     }),
 
   logout: () =>

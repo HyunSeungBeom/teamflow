@@ -5,15 +5,9 @@ export function PublicRoute() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
   const isLoading = useAuthStore((s) => s.isLoading)
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-      </div>
-    )
-  }
-
-  if (isAuthenticated) {
+  // 로딩 중에도 공개 페이지는 바로 보여준다 (스피너 안 돌림)
+  // 인증 완료 후 isAuthenticated가 true가 되면 그때 리다이렉트
+  if (!isLoading && isAuthenticated) {
     return <Navigate to="/projects" replace />
   }
 

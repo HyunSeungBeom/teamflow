@@ -312,7 +312,7 @@ Tailwind v4에서 `@theme`에 정의한 CSS 변수는 자동으로 유틸리티 
 
 1. **Mobile-first 코딩** — Tailwind 기본값이 모바일, `md:` `lg:`로 확장
 2. **Fluid Scaling (clamp) 필수** — 타이포그래피, 간격, 이미지는 화면 크기에 따라 연속적으로 변화
-   - 하드코딩된 `text-[40px] lg:text-[56px]` 대신 `text-[var(--text-fluid-display)]` 사용
+   - 하드코딩된 `text-[40px] lg:text-[56px]` 대신 `text-fluid-display` 사용
    - 화면이 커지면 글자/간격/이미지도 자연스럽게 커지고, 작아지면 작아짐
 3. **레이아웃 변경은 Breakpoint 사용**
    - Desktop: 2~3컬럼 그리드
@@ -331,6 +331,67 @@ Tailwind v4에서 `@theme`에 정의한 CSS 변수는 자동으로 유틸리티 
    - Modal: Desktop max-w-[520px] → Tablet w-full mx-4
    - 이미지/일러스트: max-w-full + 부모 컨테이너 flex-1로 자연 축소
 6. **Figma에서는 Desktop만 디자인** — Fluid 대응은 코드에서 처리
+
+### 컨테이너 전략 (greenpanda-landing 패턴)
+
+**원칙**: 고정 max-width가 아닌 **Fluid Padding**으로 여백을 관리한다. 화면이 커지면 여백도 커지고, 작아지면 여백도 줄어든다.
+
+```
+┌──────────────────── 전폭 배경 (bg-색상) ────────────────────┐
+│  ←  px-fluid-page-x  →  콘텐츠  ←  px-fluid-page-x  →     │
+│     (20px ~ 80px)                  (20px ~ 80px)           │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**구현 패턴**:
+```jsx
+{/* Fluid padding으로 여백 관리 — max-w 고정 금지 */}
+<section className="bg-[#0F172A]">
+  <div className="px-fluid-page-x py-fluid-py">
+    {/* 콘텐츠 */}
+  </div>
+</section>
+
+{/* max-w는 특정 콘텐츠 영역(카드 그리드, 폼 등)에만 선택적으로 사용 */}
+<div className="max-w-5xl mx-auto"> {/* 프로젝트 카드 그리드 등 */}
+```
+
+**금지**: 페이지 전체 래퍼에 `max-w-[1280px]`을 일괄 적용하지 않는다
+
+### 반응형 패딩/간격 스케일
+
+| 요소 | Desktop | Tablet | Mobile | 비율 |
+|------|---------|--------|--------|------|
+| 페이지 좌우 패딩 | 80px | 40px | 20px | 4:2:1 |
+| 섹션 상하 패딩 | 80px | 48px | 40px | ~1.67:1 |
+| 요소 간 gap | 60px | 36px | 32px | ~1.67:1 |
+| 컨테이너 max-width | 1280px | 100% | 100% | — |
+
+**규칙**: Desktop 간격 × 0.6 ≈ Mobile 간격
+
+### 레이아웃 전환 패턴
+
+```jsx
+{/* 2컬럼 → 1컬럼 */}
+<div className="flex flex-col lg:flex-row gap-8 lg:gap-16">
+
+{/* 3컬럼 그리드 → 2컬럼 → 1컬럼 */}
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+{/* 조건부 렌더링 (완전히 다른 UI) */}
+<div className="hidden lg:block">Desktop 전용 UI</div>
+<div className="lg:hidden">Mobile/Tablet 전용 UI</div>
+```
+
+### 이미지/일러스트 반응형 규칙
+
+1. **max-w 제한 필수** — 이미지가 과도하게 커지지 않도록
+2. **aspect-ratio 유지** — width만 반응형, height는 자동
+3. **모바일에서 축소** — `max-w-[620px] lg:max-w-[900px]`
+
+```jsx
+<Image className="w-full max-w-[620px] h-auto" />
+```
 
 ### Sprint 페이지 Description에 반응형 명시
 
