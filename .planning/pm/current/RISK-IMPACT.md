@@ -30,8 +30,8 @@
 
 ## 미결정 사항
 
-| 항목 | 결정자 | 기한 |
-|------|--------|------|
-| DnD 라이브러리 최종 선택 | Frontend | Week 3 초 |
-| 이슈 삭제 방식 (soft vs hard delete) | Backend | Week 3 초 |
-| 이슈 상세 UI (사이드 패널 vs 모달 vs 전체 페이지) | Frontend + Design | Week 3 초 |
+| 항목 | 결정자 | 기한 | 결정 |
+|------|--------|------|------|
+| DnD 라이브러리 최종 선택 | Frontend | Week 3 초 | — |
+| 이슈 삭제 방식 (soft vs hard delete) | Backend | Week 3 초 | **Soft delete** (2026-04-20 확정). `delete_date` TIMESTAMPTZ NULL 컬럼 + `delete_date IS NULL` 필터. 복구/감사 대비 + 외부 참조(담당자, 댓글 등 후속 스프린트) 안정성. |
+| 이슈 상세 UI (사이드 패널 vs 모달 vs 전체 페이지) | Frontend + Design | Week 3 초 | — |
