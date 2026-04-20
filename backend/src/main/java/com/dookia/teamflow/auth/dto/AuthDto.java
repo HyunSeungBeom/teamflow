@@ -25,7 +25,13 @@ public class AuthDto {
         }
     }
 
-    public record TokenRefreshResponse(String accessToken) {
+    public record TokenRefreshResponse(
+        String accessToken,
+        UserInfo user
+    ) {
+        public static TokenRefreshResponse of(String accessToken, User user) {
+            return new TokenRefreshResponse(accessToken, UserInfo.from(user));
+        }
     }
 
     public record UserInfo(

@@ -59,7 +59,7 @@ public class AuthController implements AuthApi {
 
         return ResponseEntity.ok()
             .header(HttpHeaders.SET_COOKIE, buildRefreshCookie(result.refreshTokenPlain()).toString())
-            .body(new AuthDto.TokenRefreshResponse(result.accessToken()));
+            .body(AuthDto.TokenRefreshResponse.of(result.accessToken(), result.user()));
     }
 
     @Override

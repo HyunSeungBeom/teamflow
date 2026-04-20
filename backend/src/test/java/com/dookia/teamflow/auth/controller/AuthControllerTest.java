@@ -98,6 +98,32 @@ class AuthControllerTest {
     }
 
     @Test
+    @DisplayName("POST /api/auth/refresh 성공 → 200 + accessToken + user + Set-Cookie")
+    void refresh_success_returnsTokenAndUser() throws Exception {
+        long userNo = 77L;
+        User user = userWithNo(userNo, "g-2", "me@b.com", "김팀플");
+        given(authService.refresh(any(), any(), any()))
+            .willReturn(new AuthService.RefreshResult(
+                "new.access.token",
+                "new-refresh-token",
+                user,
+                LocalDateTime.now().plusDays(7)
+            ));
+
+        mockMvc.perform(post("/api/auth/refresh")
+                .cookie(new jakarta.servlet.http.Cookie("teamflow_rt", "old-refresh-token")))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.accessToken", equalTo("new.access.token")))
+            .andExpect(jsonPath("$.user.no", equalTo((int) userNo)))
+            .andExpect(jsonPath("$.user.email", equalTo("me@b.com")))
+            .andExpect(jsonPath("$.user.name", equalTo("김팀플")))
+            .andExpect(jsonPath("$.user.provider", equalTo(UserProvider.GOOGLE.name())))
+            .andExpect(header().string("Set-Cookie", containsString("teamflow_rt=new-refresh-token")))
+            .andExpect(header().string("Set-Cookie", containsString("HttpOnly")))
+            .andExpect(header().string("Set-Cookie", containsString("Path=/api/auth")));
+    }
+
+    @Test
     @DisplayName("POST /api/auth/refresh: 서비스가 AUTH_TOKEN_REUSED 던지면 401 + 표준 에러 포맷")
     void refresh_reused_returns401WithErrorPayload() throws Exception {
         willThrow(new AuthException(AuthErrorCode.AUTH_TOKEN_REUSED))

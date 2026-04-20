@@ -106,7 +106,7 @@ public class AuthService {
         String accessToken = jwtService.issueAccessToken(user);
         IssuedRefreshToken newRefresh = issueRefreshToken(user, stored.getFamilyId(), userAgent, ipAddress);
 
-        return new RefreshResult(accessToken, newRefresh.plainToken(), newRefresh.expiresAt());
+        return new RefreshResult(accessToken, newRefresh.plainToken(), user, newRefresh.expiresAt());
     }
 
     public void logout(String plainRefreshToken) {
@@ -166,6 +166,7 @@ public class AuthService {
     public record RefreshResult(
         String accessToken,
         String refreshTokenPlain,
+        User user,
         LocalDateTime refreshTokenExpiresAt
     ) {}
 

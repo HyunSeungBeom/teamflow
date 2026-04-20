@@ -139,6 +139,7 @@ class AuthServiceTest {
         assertThat(stored.isUsed()).isTrue();
         assertThat(result.accessToken()).isEqualTo("new.access.token");
         assertThat(result.refreshTokenPlain()).isNotEqualTo(plain);
+        assertThat(result.user()).isSameAs(user);
 
         ArgumentCaptor<RefreshToken> captor = ArgumentCaptor.forClass(RefreshToken.class);
         verify(refreshTokenRepository).save(captor.capture());
