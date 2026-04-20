@@ -1,27 +1,37 @@
-# Sprint 1 — 리스크 레지스터
+# Sprint 2 — 리스크 레지스터
 
 ---
 
 ## 리스크 목록
 
-| ID | 리스크 | 심각도 | 영향 | 완화 방안 | 상태 |
-|----|--------|--------|------|-----------|------|
-| RISK-001 | Google Cloud OAuth 클라이언트 미설정 | **high** | 인증 전체 기능 블로킹 | Sprint 시작 전 Google Cloud Console에서 OAuth 클라이언트 생성 | **해결됨** — 직접 발급 예정 |
-| RISK-002 | PostgreSQL/Redis 로컬 환경 미구축 | medium | 백엔드 개발 블로킹 | docker-compose.yml로 로컬 DB/Redis 구성 | 미해결 |
-| RISK-003 | 프론트-백 CORS 설정 | low | 통합 시 API 호출 실패 | SecurityConfig에 CORS 허용 origin 설정 | 미해결 |
-| RISK-004 | 초대 이메일 발송 인프라 | medium | REQ-WS-002 이메일 초대 기능 | MVP에서 이메일 초대도 구현 (SendGrid 등 활용) | **해결됨** — 이메일 초대 구현 |
-| RISK-005 | 프론트-백 동시 개발 시 API 계약 불일치 | medium | 통합 시 대량 수정 | HANDOFF.md의 API 계약을 기준으로 삼고, 변경 시 상호 고지 | 완화됨 |
-
----
-
-## 사용자 결정 완료 항목
-
-### RISK-001: Google OAuth 클라이언트 → **직접 발급** (2026-04-10 결정)
-### RISK-004: 이메일 초대 → **MVP에서 구현** (2026-04-10 결정)
+| ID | 리스크 | 심각도 | 확률 | 영향 | 완화 전략 | 상태 |
+|----|--------|--------|------|------|----------|------|
+| RISK-S2-001 | DnD 라이브러리 선택 | MEDIUM | 중 | 칸반 보드 UX 품질 | dnd-kit vs @hello-pangea/dnd 사전 PoC | OPEN |
+| RISK-S2-002 | 이슈 순서(position) 동시성 | MEDIUM | 중 | 여러 사용자 동시 드래그 시 순서 꼬임 | 낙관적 업데이트 + 서버 정렬 기준 확보 | OPEN |
+| RISK-S2-003 | 백엔드 CORS 미설정 | HIGH | 높 | 프론트-백 통합 불가 | Sprint 1에서 이미 발생. 백엔드에 localhost CORS 추가 요청 | OPEN |
+| RISK-S2-004 | ticket_counter 동시성 | LOW | 낮 | 이슈 키 중복 가능성 | DB 레벨 UNIQUE 제약조건으로 방어 | RESOLVED |
+| RISK-S2-005 | 워크스페이스 라우팅 복잡도 | LOW | 낮 | 중첩 라우트 관리 | react-router nested routes 패턴 적용 | OPEN |
 
 ---
 
 ## 브라운필드 영향 맵
 
-Sprint 1은 그린필드(신규 프로젝트)이므로 기존 코드 영향 없음.
-단, `frontend/` 디렉토리에 이미 Vite + React 셋업이 완료되어 있으므로 FSD 구조를 해당 셋업 위에 구축한다.
+### Sprint 1 코드에 영향 주는 변경
+
+| 영역 | 영향 | 변경 사항 |
+|------|------|----------|
+| App.tsx 라우팅 | 변경 | 워크스페이스 중첩 라우트 추가 |
+| ProjectsPage.tsx | 변경 | 프로젝트 카드 클릭 → 워크스페이스 라우팅 연결 |
+| MainLayout.tsx | 유지 | 프로젝트 허브에서는 기존 레이아웃, 워크스페이스에서는 별도 레이아웃 |
+| Backend: Project 엔티티 | 유지 | ticket_counter 이미 존재 |
+| Backend: SecurityConfig | 변경 | 이슈 API 경로 인증 설정 추가 |
+
+---
+
+## 미결정 사항
+
+| 항목 | 결정자 | 기한 |
+|------|--------|------|
+| DnD 라이브러리 최종 선택 | Frontend | Week 3 초 |
+| 이슈 삭제 방식 (soft vs hard delete) | Backend | Week 3 초 |
+| 이슈 상세 UI (사이드 패널 vs 모달 vs 전체 페이지) | Frontend + Design | Week 3 초 |

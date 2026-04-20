@@ -1,57 +1,48 @@
-# Sprint 1 — 진입 플로우 (인증 + 랜딩/허브)
+# Sprint 2 — 프로젝트 워크스페이스 + 이슈 관리 (칸반 보드)
 
-> **기간:** 2주 (Week 1~2)  
-> **목표:** Google 로그인 → 워크스페이스 생성/초대 → 프로젝트 허브 진입 전체 플로우 완성
+> **기간:** 2주 (Week 3~4)
+> **목표:** 프로젝트 카드 클릭 → 워크스페이스 진입 → 칸반 보드에서 이슈 관리 전체 플로우 완성
 
 ---
 
-## Phase 1: 기반 구축 (Week 1 전반)
+## Phase 1: 기반 구축 (Week 3 전반)
 
 | 태스크 | 요구사항 ID | 담당 | TDD |
 |--------|------------|------|-----|
-| DB 스키마 설계 + 마이그레이션 (users, refresh_tokens, workspaces, workspace_members, projects) | REQ-AUTH-001~006, REQ-WS-001~003, REQ-LAND-003 | Backend | - |
-| Spring Boot 프로젝트 초기 설정 (Security, JPA, Redis) | 전체 | Backend | - |
-| User Entity + Repository | REQ-AUTH-006 | Backend | true |
-| RefreshToken Entity + Repository | REQ-AUTH-003 | Backend | true |
-| React 프로젝트 FSD 디렉토리 구조 잡기 | 전체 | Frontend | - |
+| Issue 엔티티 + Repository (issues, issue 관련 enum) | REQ-ISSUE-001 | Backend | true |
+| DB 마이그레이션 (issues 테이블) | REQ-ISSUE-001 | Backend | - |
+| 워크스페이스 레이아웃 컴포넌트 (사이드바 + 메인) | REQ-WS-LAYOUT-001~003 | Frontend | - |
+| 프로젝트 진입 라우팅 연결 | REQ-CARRY-002 | Frontend | - |
+| 프로젝트 생성 모달 완성 | REQ-CARRY-001 | Frontend | - |
 
-## Phase 2: 인증 구현 (Week 1 후반)
-
-| 태스크 | 요구사항 ID | 담당 | TDD |
-|--------|------------|------|-----|
-| JwtService (토큰 생성/검증) | REQ-AUTH-002, 004 | Backend | true |
-| GoogleOAuthService (Google API 통신) | REQ-AUTH-001 | Backend | true |
-| AuthService (로그인/갱신/로그아웃) | REQ-AUTH-001~006 | Backend | true |
-| JwtAuthenticationFilter + SecurityConfig | REQ-AUTH-002 | Backend | true |
-| AuthController (3개 엔드포인트) | REQ-AUTH-001~005 | Backend | true |
-| Zustand authStore + API 클라이언트 (interceptor) | REQ-AUTH-002, 004 | Frontend | - |
-| AuthProvider (새로고침 시 인증 복원) | REQ-AUTH-004 | Frontend | - |
-| OAuth 콜백 페이지 | REQ-AUTH-001 | Frontend | - |
-| GoogleLoginButton + 로그인 페이지 | REQ-AUTH-001, REQ-LAND-001 | Frontend | - |
-| ProtectedRoute / PublicRoute | REQ-AUTH-002 | Frontend | - |
-
-## Phase 3: 워크스페이스 + 프로젝트 허브 (Week 2)
+## Phase 2: 이슈 CRUD (Week 3 후반)
 
 | 태스크 | 요구사항 ID | 담당 | TDD |
 |--------|------------|------|-----|
-| Workspace Entity + Repository | REQ-WS-001 | Backend | true |
-| WorkspaceMember Entity + Repository | REQ-WS-001~003 | Backend | true |
-| Project Entity + Repository | REQ-LAND-003 | Backend | true |
-| WorkspaceService (생성, 초대, 멤버 관리) | REQ-WS-001~003 | Backend | true |
-| ProjectService (CRUD) | REQ-LAND-003, 004 | Backend | true |
-| WorkspaceController + ProjectController | REQ-WS-001~003, REQ-LAND-003~004 | Backend | true |
-| 랜딩 페이지 UI | REQ-LAND-001 | Frontend | - |
-| 프로젝트 허브 UI (카드 목록 + 생성) | REQ-LAND-002, 003 | Frontend | - |
-| 프로젝트 선택 → 워크스페이스 진입 | REQ-LAND-004 | Frontend | - |
-| 워크스페이스 생성 모달 + 초대 UI | REQ-WS-001~003 | Frontend | - |
+| IssueService (생성/조회/수정/삭제) | REQ-ISSUE-001, 005, 006 | Backend | true |
+| IssueController (REST API 5개) | REQ-ISSUE-001~006 | Backend | true |
+| 이슈 생성 모달/폼 UI | REQ-ISSUE-001 | Frontend | - |
+| 이슈 상세 사이드 패널 UI | REQ-ISSUE-004, 005 | Frontend | - |
+| react-query: useIssues, useCreateIssue, useUpdateIssue 훅 | REQ-ISSUE-001~006 | Frontend | - |
 
-## Phase 4: 통합 + 검증 (Week 2 후반)
+## Phase 3: 칸반 보드 (Week 4 전반)
 
 | 태스크 | 요구사항 ID | 담당 | TDD |
 |--------|------------|------|-----|
-| 프론트-백 통합 테스트 (로그인 → 허브 E2E) | 전체 | 공용 | - |
-| Rate Limiting 설정 (Redis) | REQ-AUTH-001~004 | Backend | - |
-| 만료 토큰 정리 스케줄러 | REQ-AUTH-003 | Backend | - |
+| 칸반 보드 컴포넌트 (4컬럼 레이아웃) | REQ-ISSUE-002 | Frontend | - |
+| 드래그 앤 드롭 (dnd-kit 또는 @hello-pangea/dnd) | REQ-ISSUE-003 | Frontend | - |
+| 이슈 상태 변경 API (PATCH /issues/:no/status) | REQ-ISSUE-003 | Backend | true |
+| 이슈 순서 변경 API (PATCH /issues/:no/position) | REQ-ISSUE-003 | Backend | true |
+| 이슈 카드 컴포넌트 (키, 제목, 우선순위, 담당자, 기한) | REQ-ISSUE-002 | Frontend | - |
+
+## Phase 4: 통합 + 검증 (Week 4 후반)
+
+| 태스크 | 요구사항 ID | 담당 | TDD |
+|--------|------------|------|-----|
+| 프론트-백 통합 테스트 (허브 → 워크스페이스 → 이슈 관리 E2E) | 전체 | 공용 | - |
+| 워크스페이스 사이드바 멤버 목록 | REQ-WS-LAYOUT-002 | Frontend | - |
+| 이슈 삭제 확인 다이얼로그 | REQ-ISSUE-006 | Frontend | - |
+| 빈 상태 UI (이슈 0개일 때) | REQ-ISSUE-002 | Frontend | - |
 | 버그 수정 + 코드 리뷰 | 전체 | 공용 | - |
 
 ---
@@ -61,10 +52,10 @@
 ```
 Backend (친구)              Frontend (나)
 ─────────────────           ─────────────────
-Week 1: DB + Spring 셋업    Week 1: FSD 구조 + Auth UI
-        Auth API 구현                Zustand + Interceptor
-                                     로그인/콜백 페이지
+Week 3: DB + Issue 엔티티    Week 3: 워크스페이스 레이아웃
+        Issue CRUD API               프로젝트 생성 모달
+                                     이슈 생성 폼/상세 패널
 
-Week 2: Workspace/Project   Week 2: 허브 UI + 워크스페이스 UI
-        API 구현                     프론트-백 통합
+Week 4: 상태/순서 변경 API    Week 4: 칸반 보드 + DnD
+        통합 테스트                    프론트-백 통합
 ```
