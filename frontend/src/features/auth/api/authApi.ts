@@ -11,6 +11,7 @@ interface AuthResponse {
 
 interface RefreshResponse {
   accessToken: string
+  user: User
 }
 
 export const authApi = {
