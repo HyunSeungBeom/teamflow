@@ -1,6 +1,6 @@
 ---
 name: fix-issue
-description: Investigate and fix an issue with parallel triage, targeted implementation, and mandatory verification.
+description: "병렬 트리아지 + 타겟 수정 + 검증으로 이슈 해결."
 argument-hint: "<issue-id or bug description>"
 allowed-tools:
   - Read

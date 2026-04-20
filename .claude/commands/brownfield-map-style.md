@@ -1,6 +1,6 @@
 ---
 name: brownfield-map-style
-description: Map architecture and coding conventions, then curate approved patterns and anti-patterns for coding agents.
+description: "아키텍처 매핑 + 승인 패턴/안티패턴 큐레이션."
 argument-hint: "[optional focus area, e.g. auth, api, billing]"
 allowed-tools:
   - Read

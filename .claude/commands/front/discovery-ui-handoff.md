@@ -1,6 +1,6 @@
 ---
 name: discovery-ui-handoff
-description: Unified requirement-to-handoff flow for greenfield and brownfield without Figma input.
+description: "그린필드/브라운필드 통합 요구사항→핸드오프 플로우 (Figma 없이도 가능)."
 argument-hint: "<requirement text, ticket link, or initiative>"
 allowed-tools:
   - Read

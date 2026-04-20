@@ -1,6 +1,6 @@
 ---
 name: install-browser-skills
-description: Install and verify browser testing skills (agent-browser + playwright template skill).
+description: "브라우저 테스트 스킬 설치 및 검증 (agent-browser + Playwright)."
 argument-hint: "[optional repo root]"
 allowed-tools:
   - Read

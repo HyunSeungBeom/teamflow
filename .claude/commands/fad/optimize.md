@@ -1,6 +1,6 @@
 ---
 name: fad:optimize
-description: Mandatory post-review optimization pass before finishing a branch.
+description: "리뷰 후 필수 최적화 단계 (유지보수성/성능 개선, 동작 변경 없음)."
 argument-hint: "[--run-id <id>] [optional scope]"
 allowed-tools:
   - Read

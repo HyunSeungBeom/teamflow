@@ -1,6 +1,6 @@
 ---
 name: setup-monitoring
-description: Configure provider-agnostic monitoring adapters, alert rules, and dashboard inventory.
+description: "프로바이더 비종속 모니터링 어댑터, 알림 규칙, 대시보드 설정."
 argument-hint: "[provider=custom|datadog|grafana|cloudwatch]"
 allowed-tools:
   - Read

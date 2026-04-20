@@ -1,6 +1,6 @@
 ---
 name: health-check
-description: Run deep service health diagnostics from configurable checks (HTTP/TCP/command).
+description: "서비스 상태 심층 진단 (HTTP/TCP/명령어 기반 검사)."
 argument-hint: "[optional repo root] [--allow-empty]"
 allowed-tools:
   - Read

@@ -1,6 +1,6 @@
 ---
 name: pm-delivery-loop
-description: Compatibility wrapper for the unified FAD pipeline.
+description: "통합 FAD 파이프라인의 호환성 래퍼."
 argument-hint: "<phase-number> | <requirement text> [pipeline flags]"
 allowed-tools:
   - Read

@@ -1,6 +1,6 @@
 ---
 name: freeze
-description: Restrict file edits to a directory boundary.
+description: "파일 편집을 특정 디렉토리 범위로 제한."
 argument-hint: "<directory-path>"
 allowed-tools:
   - Read

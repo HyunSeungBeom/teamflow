@@ -1,6 +1,6 @@
 ---
 name: careful
-description: Enable destructive-command warning mode for this project session.
+description: "위험 명령 경고 모드 활성화."
 allowed-tools:
   - Read
   - Write

@@ -1,6 +1,6 @@
 ---
 name: unguard
-description: Disable full safety mode (remove careful and freeze states).
+description: "완전 안전 모드 해제 (careful + freeze 제거)."
 allowed-tools:
   - Read
   - Write

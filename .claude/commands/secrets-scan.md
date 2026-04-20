@@ -1,6 +1,6 @@
 ---
 name: secrets-scan
-description: Detect exposed credentials/secrets in repository content.
+description: "레포지토리 내 시크릿/자격증명 유출 탐지."
 argument-hint: "[optional repo root]"
 allowed-tools:
   - Read

@@ -1,6 +1,6 @@
 ---
 name: fad:help
-description: Show the primary FAD command surface and bundle-aware workflow entrypoints.
+description: "FAD 커맨드 목록 및 사용법 안내."
 ---
 
 <objective>

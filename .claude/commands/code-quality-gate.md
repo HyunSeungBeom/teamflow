@@ -1,6 +1,6 @@
 ---
 name: code-quality-gate
-description: Run lint, typecheck (if TS), and tests with soft-skip policy for missing scripts.
+description: "lint + 타입체크 + 테스트 게이트. 스크립트 없으면 soft-skip."
 argument-hint: "[--strict-missing] [optional repo root]"
 allowed-tools:
   - Read

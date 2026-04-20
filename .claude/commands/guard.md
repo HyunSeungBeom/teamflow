@@ -1,6 +1,6 @@
 ---
 name: guard
-description: Activate full safety mode (careful + freeze) in one command.
+description: "완전 안전 모드 활성화 (careful + freeze)."
 argument-hint: "<directory-path>"
 allowed-tools:
   - Read

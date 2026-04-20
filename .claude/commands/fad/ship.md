@@ -1,6 +1,6 @@
 ---
 name: fad:ship
-description: Final ship-readiness workflow after strict quality gate passes.
+description: "품질 게이트 통과 후 최종 출시 준비 워크플로우."
 argument-hint: "[phase, milestone, or release name]"
 allowed-tools:
   - Read

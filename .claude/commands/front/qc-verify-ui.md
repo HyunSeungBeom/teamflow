@@ -1,6 +1,6 @@
 ---
 name: qc-verify-ui
-description: Run QC gate with browser automation for functional flow and DS-critical checks.
+description: "브라우저 자동화로 기능 플로우 + 디자인 시스템 핵심 검증."
 argument-hint: "<phase-number>"
 allowed-tools:
   - Read

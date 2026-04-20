@@ -1,6 +1,6 @@
 ---
 name: pr-feedback-loop
-description: Ingest GitHub PR comments, triage risk/impact, apply fixes, run quality gate, then QC retest.
+description: "GitHub PR 코멘트 수집 → 수정 → 품질 게이트 → QC 재검증."
 argument-hint: "<pr-url-or-number>"
 allowed-tools:
   - Read

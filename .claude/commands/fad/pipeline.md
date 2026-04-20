@@ -1,6 +1,6 @@
 ---
 name: fad:pipeline
-description: Unified FAD delivery pipeline from requirement intake to finish, with strict review/optimize gates.
+description: "요구사항 수집부터 완료까지 통합 딜리버리 파이프라인. 리뷰/최적화 게이트 포함."
 argument-hint: "<requirement-or-phase> [--mode brownfield|greenfield] [--with-figma auto|off] [--strict] [--doc-export off|en|ja]"
 allowed-tools:
   - Read

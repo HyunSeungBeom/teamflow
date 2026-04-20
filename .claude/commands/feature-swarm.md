@@ -1,6 +1,6 @@
 ---
 name: feature-swarm
-description: Execute a feature as coordinated parallel workstreams with integration and verification gates.
+description: "병렬 워크스트림으로 기능 구현. 통합/검증 게이트 포함."
 argument-hint: "<feature objective>"
 allowed-tools:
   - Read

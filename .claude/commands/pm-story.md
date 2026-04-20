@@ -1,6 +1,6 @@
 ---
 name: pm-story
-description: Generate user stories and splitting decisions using local PM skills.
+description: "로컬 PM 스킬로 유저 스토리 + 분할 판단 생성."
 argument-hint: "<feature or epic context>"
 allowed-tools:
   - Read

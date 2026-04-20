@@ -1,6 +1,6 @@
 ---
 name: incident-response
-description: Execute incident triage, containment, recovery, and post-incident logging.
+description: "인시던트 트리아지, 격리, 복구, 사후 로깅 워크플로우."
 argument-hint: "<incident summary or alert id>"
 allowed-tools:
   - Read

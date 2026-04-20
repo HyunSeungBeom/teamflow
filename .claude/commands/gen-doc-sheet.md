@@ -1,6 +1,6 @@
 ---
 name: gen-doc-sheet
-description: Optional spreadsheet export for PM/build/QC artifacts with EN/JA output.
+description: "PM/빌드/QC 산출물을 스프레드시트로 내보내기 (EN/JA)."
 argument-hint: "<context> [--lang en|ja|both]"
 allowed-tools:
   - Read

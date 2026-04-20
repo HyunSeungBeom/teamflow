@@ -1,6 +1,6 @@
 ---
 name: pm-to-build
-description: Convert PM handoff artifacts into FAD planning and execution.
+description: "PM 핸드오프 산출물을 FAD 계획/실행 레인으로 전환."
 argument-hint: "<phase-number>"
 allowed-tools:
   - Read

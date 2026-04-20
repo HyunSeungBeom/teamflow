@@ -1,6 +1,6 @@
 ---
 name: security-scan
-description: Run local-first security scanning (dependency + optional SAST) and block on required findings.
+description: "로컬 우선 보안 스캔 (의존성 + 시크릿 + 선택적 SAST)."
 argument-hint: "[--fail-on low|moderate|high|critical] [optional repo root]"
 allowed-tools:
   - Read

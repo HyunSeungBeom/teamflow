@@ -1,6 +1,6 @@
 ---
 name: fad:pr-branch
-description: Prepare a review-safe PR branch with planning noise filtered out.
+description: "PR용 브랜치 정리 — 플래닝 노이즈 파일 필터링."
 argument-hint: "[target branch, default: main]"
 allowed-tools:
   - Bash

@@ -1,6 +1,6 @@
 ---
 name: autopilot-loop
-description: Run a bounded autonomous delivery loop with memory updates and blocker-based stop conditions.
+description: "범위 제한 자율 딜리버리 사이클. 메모리 업데이트 + 블로커 감지 시 중단."
 argument-hint: "[max-cycles]"
 allowed-tools:
   - Read

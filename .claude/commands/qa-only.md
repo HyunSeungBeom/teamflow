@@ -1,6 +1,6 @@
 ---
 name: qa-only
-description: Browser-based QA report only (no code changes).
+description: "브라우저 기반 QA 리포트만 생성 (코드 변경 없음)."
 argument-hint: "<url-or-phase-context>"
 allowed-tools:
   - Read

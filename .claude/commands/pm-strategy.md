@@ -1,6 +1,6 @@
 ---
 name: pm-strategy
-description: Run strategy workflow from local PM commands and skills.
+description: "로컬 PM 커맨드/스킬로 전략 워크플로우 실행."
 argument-hint: "<product strategy context>"
 allowed-tools:
   - Read

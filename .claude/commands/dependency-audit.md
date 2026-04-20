@@ -1,6 +1,6 @@
 ---
 name: dependency-audit
-description: Check dependency vulnerabilities with local-first tooling and severity gate.
+description: "의존성 취약점 검사. 심각도 기준 차단."
 argument-hint: "[--fail-on low|moderate|high|critical] [optional repo root]"
 allowed-tools:
   - Read

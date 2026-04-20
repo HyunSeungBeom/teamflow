@@ -1,6 +1,6 @@
 ---
 name: pm-prioritize
-description: Run prioritization advisor workflow from local PM skills.
+description: "로컬 PM 스킬로 우선순위 판단 워크플로우 실행."
 argument-hint: "<backlog or decision context>"
 allowed-tools:
   - Read

@@ -1,6 +1,6 @@
 ---
 name: fad:quality-gate
-description: Strict merge gate combining code quality, security, and unresolved-risk checks.
+description: "엄격한 머지 게이트: 코드 품질 + 보안 + 미해결 리스크 검사."
 argument-hint: "[--run-id <id>] [optional repo root]"
 allowed-tools:
   - Read

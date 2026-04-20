@@ -1,6 +1,6 @@
 ---
 name: rollback
-description: Generate rollback readiness plan and execute rollback workflow with data-safety checks.
+description: "롤백 준비 상태 점검 + 데이터 안전성 확인 후 롤백 실행."
 argument-hint: "[target release/tag/sha]"
 allowed-tools:
   - Read

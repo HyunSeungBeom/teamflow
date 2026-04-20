@@ -1,6 +1,6 @@
 ---
 name: pm-discover
-description: Run PM discovery workflow from local PM skills pack.
+description: "로컬 PM 스킬 팩으로 디스커버리 워크플로우 실행."
 argument-hint: "<problem, opportunity, or requirement>"
 allowed-tools:
   - Read

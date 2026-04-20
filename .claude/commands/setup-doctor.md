@@ -1,6 +1,6 @@
 ---
 name: setup-doctor
-description: Run one-shot preflight checks for CLI, MCP, and key configuration.
+description: "CLI, MCP, 주요 설정 원샷 점검."
 argument-hint: "[optional repo root]"
 allowed-tools:
   - Read

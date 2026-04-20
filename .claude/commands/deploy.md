@@ -1,6 +1,6 @@
 ---
 name: deploy
-description: Orchestrate production-safe deployment with parallel readiness checks, rollback planning, and gated execution.
+description: "프로덕션 안전 배포. 병렬 준비 점검 + 롤백 계획 + 게이트 실행."
 argument-hint: "<environment> [scope or release note]"
 allowed-tools:
   - Read

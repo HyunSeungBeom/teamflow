@@ -1,6 +1,6 @@
 ---
 name: autoplan
-description: Run a full plan-review pipeline automatically (PM + architecture + design + testability) and surface only high-leverage decisions.
+description: "자동 계획-리뷰 파이프라인 (PM + 아키텍처 + 디자인 + 테스트 가능성)."
 argument-hint: "<feature or requirement context>"
 allowed-tools:
   - Read

@@ -1,6 +1,6 @@
 ---
 name: review
-description: Run severity-first code review with parallel analyzers and actionable findings.
+description: "심각도 우선 코드 리뷰. 병렬 분석 + 실행 가능한 피드백."
 argument-hint: "[optional: file path, module, or change scope]"
 allowed-tools:
   - Read

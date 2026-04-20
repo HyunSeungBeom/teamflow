@@ -1,6 +1,6 @@
 ---
 name: pm-intake
-description: Discuss a requirement and generate the PM handoff pack (PRD, sprint, stories, engineering handoff).
+description: "요구사항 논의 후 PM 핸드오프 팩 생성 (PRD, 스프린트, 스토리, 핸드오프)."
 argument-hint: "<requirement, feature request, or initiative>"
 allowed-tools:
   - Read

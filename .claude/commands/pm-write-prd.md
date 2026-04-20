@@ -1,6 +1,6 @@
 ---
 name: pm-write-prd
-description: Generate a decision-ready PRD using local PM workflow assets.
+description: "로컬 PM 워크플로우 자산으로 의사결정 가능한 PRD 생성."
 argument-hint: "<feature, initiative, or requirement>"
 allowed-tools:
   - Read

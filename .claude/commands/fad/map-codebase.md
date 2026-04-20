@@ -1,6 +1,6 @@
 ---
 name: fad:map-codebase
-description: Build a brownfield codebase map focused on architecture, conventions, concerns, and testing signals.
+description: "브라운필드 코드베이스 분석 — 아키텍처, 컨벤션, 테스트 패턴 파악."
 argument-hint: "[optional focus area]"
 allowed-tools:
   - Read

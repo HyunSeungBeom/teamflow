@@ -1,6 +1,6 @@
 ---
 name: pm-plan-roadmap
-description: Build roadmap and sprint sequencing from local PM workflows.
+description: "로컬 PM 워크플로우로 로드맵 + 스프린트 순서 수립."
 argument-hint: "<time horizon or initiative context>"
 allowed-tools:
   - Read

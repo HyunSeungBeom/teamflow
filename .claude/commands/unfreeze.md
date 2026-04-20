@@ -1,6 +1,6 @@
 ---
 name: unfreeze
-description: Remove freeze edit boundary.
+description: "freeze 편집 제한 해제."
 allowed-tools:
   - Read
   - Write
