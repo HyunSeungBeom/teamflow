@@ -67,7 +67,11 @@ export function WorkspaceModal({ isOpen, onClose, onSuccess }: WorkspaceModalPro
           className="w-full mt-2"
           disabled={isLoading}
         >
-          {isLoading ? <Spinner size="sm" className="border-white border-t-transparent" /> : '워크스페이스 생성'}
+          {isLoading ? (
+            <Spinner size="sm" className="border-white border-t-transparent" />
+          ) : (
+            '워크스페이스 생성'
+          )}
         </Button>
       </form>
 

@@ -84,17 +84,24 @@ export function Footer() {
         {/* Divider + Bottom */}
         <div className="border-t border-slate-800 mt-fluid-gap pt-6 lg:pt-8">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-            <p className="text-xs text-slate-500">
-              © 2026 TeamFlow. All rights reserved.
-            </p>
+            <p className="text-xs text-slate-500">© 2026 TeamFlow. All rights reserved.</p>
             <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
-              <Link to="/privacy" className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
+              <Link
+                to="/privacy"
+                className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
+              >
                 개인정보처리방침
               </Link>
-              <Link to="/terms" className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
+              <Link
+                to="/terms"
+                className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
+              >
                 이용약관
               </Link>
-              <Link to="#" className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
+              <Link
+                to="#"
+                className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
+              >
                 쿠키 정책
               </Link>
             </div>

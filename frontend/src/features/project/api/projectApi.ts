@@ -12,6 +12,5 @@ export const projectApi = {
   list: (workspaceNo: number) =>
     apiClient.get<ProjectSummary[]>(`/api/workspaces/${workspaceNo}/projects`),
 
-  getDetail: (projectNo: number) =>
-    apiClient.get<Project>(`/api/projects/${projectNo}`),
+  getDetail: (projectNo: number) => apiClient.get<Project>(`/api/projects/${projectNo}`),
 }

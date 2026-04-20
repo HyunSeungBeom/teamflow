@@ -10,11 +10,9 @@ export const workspaceApi = {
   create: (data: { name: string }) =>
     apiClient.post<CreateWorkspaceResponse>('/api/workspaces', data),
 
-  list: () =>
-    apiClient.get<WorkspaceSummary[]>('/api/workspaces'),
+  list: () => apiClient.get<WorkspaceSummary[]>('/api/workspaces'),
 
-  getDetail: (workspaceNo: number) =>
-    apiClient.get<Workspace>(`/api/workspaces/${workspaceNo}`),
+  getDetail: (workspaceNo: number) => apiClient.get<Workspace>(`/api/workspaces/${workspaceNo}`),
 
   invite: (workspaceNo: number, data: { inviteeUserNo: number; role: string }) =>
     apiClient.post<InviteResponse>(`/api/workspaces/${workspaceNo}/invite`, data),

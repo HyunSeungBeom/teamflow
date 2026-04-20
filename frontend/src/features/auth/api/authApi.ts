@@ -23,6 +23,5 @@ export const authApi = {
       timeout: 5000,
     }),
 
-  logout: () =>
-    apiClient.post('/api/auth/logout'),
+  logout: () => apiClient.post('/api/auth/logout'),
 }
