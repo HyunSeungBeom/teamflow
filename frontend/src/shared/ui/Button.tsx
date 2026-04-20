@@ -14,12 +14,9 @@ import { twMerge } from 'tailwind-merge'
 const variants = {
   primary:
     'bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800 shadow-primary-glow',
-  secondary:
-    'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 active:bg-gray-100',
-  ghost:
-    'bg-transparent text-gray-500 hover:bg-gray-100 active:bg-gray-200',
-  danger:
-    'bg-error text-white hover:bg-red-600 active:bg-red-700',
+  secondary: 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 active:bg-gray-100',
+  ghost: 'bg-transparent text-gray-500 hover:bg-gray-100 active:bg-gray-200',
+  danger: 'bg-error text-white hover:bg-red-600 active:bg-red-700',
 } as const
 
 const sizes = {

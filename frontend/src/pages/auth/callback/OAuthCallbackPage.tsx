@@ -41,7 +41,9 @@ export function OAuthCallbackPage() {
       <div className="text-center">
         <Spinner size="lg" className="mx-auto mb-4" />
         <p className="text-lg font-semibold text-gray-500">로그인 처리 중...</p>
-        <p className="text-sm text-gray-400 mt-2">잠시만 기다려주세요. Google 계정을 확인하고 있습니다.</p>
+        <p className="text-sm text-gray-400 mt-2">
+          잠시만 기다려주세요. Google 계정을 확인하고 있습니다.
+        </p>
       </div>
     </div>
   )

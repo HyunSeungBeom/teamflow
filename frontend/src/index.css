@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /*
  * TeamFlow Design System Tokens
@@ -6,30 +6,30 @@
  */
 @theme {
   /* ─── Colors: Primary (Indigo) ─── */
-  --color-primary-50: #EEF2FF;
-  --color-primary-100: #E0E7FF;
-  --color-primary-200: #C7D2FE;
-  --color-primary-300: #A5B4FC;
-  --color-primary-400: #818CF8;
-  --color-primary-500: #6366F1;
-  --color-primary-600: #4F46E5;
-  --color-primary-700: #4338CA;
-  --color-primary-800: #3730A3;
-  --color-primary-900: #312E81;
+  --color-primary-50: #eef2ff;
+  --color-primary-100: #e0e7ff;
+  --color-primary-200: #c7d2fe;
+  --color-primary-300: #a5b4fc;
+  --color-primary-400: #818cf8;
+  --color-primary-500: #6366f1;
+  --color-primary-600: #4f46e5;
+  --color-primary-700: #4338ca;
+  --color-primary-800: #3730a3;
+  --color-primary-900: #312e81;
 
   /* ─── Colors: Semantic ─── */
-  --color-success: #10B981;
-  --color-success-light: #D1FAE5;
-  --color-success-dark: #065F46;
-  --color-warning: #F59E0B;
-  --color-warning-light: #FEF3C7;
-  --color-warning-dark: #92400E;
-  --color-error: #EF4444;
-  --color-error-light: #FEE2E2;
-  --color-error-dark: #991B1B;
-  --color-info: #3B82F6;
-  --color-info-light: #DBEAFE;
-  --color-info-dark: #1E40AF;
+  --color-success: #10b981;
+  --color-success-light: #d1fae5;
+  --color-success-dark: #065f46;
+  --color-warning: #f59e0b;
+  --color-warning-light: #fef3c7;
+  --color-warning-dark: #92400e;
+  --color-error: #ef4444;
+  --color-error-light: #fee2e2;
+  --color-error-dark: #991b1b;
+  --color-info: #3b82f6;
+  --color-info-light: #dbeafe;
+  --color-info-dark: #1e40af;
 
   /* ─── Border Radius ─── */
   --radius-sm: 4px;
@@ -52,14 +52,14 @@
   --shadow-primary-glow: 0 1px 3px rgba(79, 70, 229, 0.25);
 
   /* ─── Fluid Typography (clamp: min, preferred, max) ─── */
-  --text-fluid-display: clamp(2.25rem, 1.5rem + 3vw, 3.5rem);      /* 36px → 56px */
-  --text-fluid-h1: clamp(1.75rem, 1.25rem + 2vw, 2.25rem);         /* 28px → 36px */
-  --text-fluid-h2: clamp(1.5rem, 1.125rem + 1.5vw, 1.875rem);      /* 24px → 30px */
-  --text-fluid-h3: clamp(1.25rem, 1rem + 1vw, 1.5rem);             /* 20px → 24px */
+  --text-fluid-display: clamp(2.25rem, 1.5rem + 3vw, 3.5rem); /* 36px → 56px */
+  --text-fluid-h1: clamp(1.75rem, 1.25rem + 2vw, 2.25rem); /* 28px → 36px */
+  --text-fluid-h2: clamp(1.5rem, 1.125rem + 1.5vw, 1.875rem); /* 24px → 30px */
+  --text-fluid-h3: clamp(1.25rem, 1rem + 1vw, 1.5rem); /* 20px → 24px */
 
   /* ─── Fluid Spacing ─── */
-  --spacing-fluid-section: clamp(2rem, 1rem + 4vw, 5rem);           /* 32px → 80px */
-  --spacing-fluid-page-x: clamp(1.25rem, 0.5rem + 3vw, 5rem);      /* 20px → 80px */
-  --spacing-fluid-gap: clamp(2rem, 1rem + 2.5vw, 3.75rem);         /* 32px → 60px */
-  --spacing-fluid-py: clamp(2.5rem, 2rem + 3vw, 5rem);             /* 40px → 80px */
+  --spacing-fluid-section: clamp(2rem, 1rem + 4vw, 5rem); /* 32px → 80px */
+  --spacing-fluid-page-x: clamp(1.25rem, 0.5rem + 3vw, 5rem); /* 20px → 80px */
+  --spacing-fluid-gap: clamp(2rem, 1rem + 2.5vw, 3.75rem); /* 32px → 60px */
+  --spacing-fluid-py: clamp(2.5rem, 2rem + 3vw, 5rem); /* 40px → 80px */
 }

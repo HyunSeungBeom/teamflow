@@ -33,10 +33,7 @@ export function ProjectsPage() {
       </div>
 
       {/* Workspace Modal */}
-      <WorkspaceModal
-        isOpen={showWorkspaceModal}
-        onClose={() => setShowWorkspaceModal(false)}
-      />
+      <WorkspaceModal isOpen={showWorkspaceModal} onClose={() => setShowWorkspaceModal(false)} />
     </div>
   )
 }

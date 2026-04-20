@@ -41,7 +41,9 @@ export function LandingPage() {
               {/* Main Content */}
               <div className="flex-1 p-4 sm:p-5 lg:p-6 space-y-4 lg:space-y-5">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm lg:text-base font-semibold text-slate-200">내 프로젝트</span>
+                  <span className="text-sm lg:text-base font-semibold text-slate-200">
+                    내 프로젝트
+                  </span>
                   <div className="w-6 h-6 lg:w-8 lg:h-8 rounded-full bg-primary-500" />
                 </div>
 
@@ -59,7 +61,9 @@ export function LandingPage() {
                 </div>
 
                 <div className="bg-[#334155] rounded-xl p-3 lg:p-4">
-                  <div className="text-xs lg:text-sm font-semibold text-slate-200 mb-3">주간 활동</div>
+                  <div className="text-xs lg:text-sm font-semibold text-slate-200 mb-3">
+                    주간 활동
+                  </div>
                   <div className="flex items-end gap-2 h-28 lg:h-36">
                     {[60, 90, 45, 110, 75, 130, 55].map((h, i) => (
                       <div
@@ -78,10 +82,14 @@ export function LandingPage() {
                     { w: 'w-48', color: 'bg-primary-700' },
                   ].map((t, i) => (
                     <div key={i} className="flex items-center gap-2">
-                      <div className={`w-3 h-3 lg:w-4 lg:h-4 rounded ${i === 0 ? 'bg-success' : 'bg-primary-500'}`} />
+                      <div
+                        className={`w-3 h-3 lg:w-4 lg:h-4 rounded ${i === 0 ? 'bg-success' : 'bg-primary-500'}`}
+                      />
                       <div className={`h-2 lg:h-3 ${t.w} bg-[#475569] rounded`} />
                       <div className="ml-auto">
-                        <div className={`h-3.5 lg:h-5 w-10 lg:w-14 ${t.color} rounded text-[6px] lg:text-[8px] text-white flex items-center justify-center`}>
+                        <div
+                          className={`h-3.5 lg:h-5 w-10 lg:w-14 ${t.color} rounded text-[6px] lg:text-[8px] text-white flex items-center justify-center`}
+                        >
                           {i === 0 ? 'Done' : 'In Progress'}
                         </div>
                       </div>

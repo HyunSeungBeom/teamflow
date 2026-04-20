@@ -7,8 +7,15 @@ export function useCreateWorkspace() {
   })
 
   const inviteMutation = useMutation({
-    mutationFn: ({ workspaceNo, inviteeUserNo, role }: { workspaceNo: number; inviteeUserNo: number; role: string }) =>
-      workspaceApi.invite(workspaceNo, { inviteeUserNo, role }),
+    mutationFn: ({
+      workspaceNo,
+      inviteeUserNo,
+      role,
+    }: {
+      workspaceNo: number
+      inviteeUserNo: number
+      role: string
+    }) => workspaceApi.invite(workspaceNo, { inviteeUserNo, role }),
   })
 
   return { createMutation, inviteMutation }
