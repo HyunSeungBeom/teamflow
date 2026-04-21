@@ -1,24 +1,78 @@
-version: '3.8'
 services:
   postgres:
     image: postgres:16-alpine
     container_name: teamflow-postgres
     ports:
-      - "5432:5432"
+      # 호스트 5432 가 이미 사용 중이면 .env 에서 POSTGRES_HOST_PORT=15432 등으로 override
+      - "${POSTGRES_HOST_PORT:-5432}:5432"
     environment:
       POSTGRES_USER: teamflow
       POSTGRES_PASSWORD: teamflow
       POSTGRES_DB: teamflow
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U teamflow -d teamflow"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
   redis:
     image: redis:7-alpine
     container_name: teamflow-redis
     ports:
-      - "6379:6379"
+      # 호스트 6379 가 이미 사용 중이면 .env 에서 REDIS_HOST_PORT=16379 등으로 override
+      - "${REDIS_HOST_PORT:-6379}:6379"
     volumes:
       - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # ──────────────────────────────────────────────────────────────────────
+  # 백엔드 전용 로컬 구동 서비스
+  # 프론트 배포 여부와 무관하게 아래 한 줄로 전체 스택을 띄워 확인 가능.
+  #
+  #   docker compose up -d --build
+  #
+  # 확인 URL:
+  #   - Swagger UI : http://localhost:8082/swagger-ui.html
+  #   - OpenAPI    : http://localhost:8082/v3/api-docs
+  #   - Health     : http://localhost:8082/actuator/health
+  # ──────────────────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: teamflow-backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      # 호스트 8082 가 이미 사용 중(로컬 bootRun 등)이면 .env 에서 BACKEND_HOST_PORT=18082 등으로 override
+      - "${BACKEND_HOST_PORT:-8082}:8082"
+    environment:
+      # 외부 Neon/Redis Cloud(.env) 대신 컴포즈 네트워크의 컨테이너를 강제 사용
+      SPRING_PROFILES_ACTIVE: local
+      DATASOURCE_URL: postgresql://postgres:5432/teamflow
+      DB_USER: teamflow
+      DB_PASSWORD: teamflow
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: ""
+      REDIS_SSL: "false"
+      # 프론트 로컬 dev 서버 및 대체 포트 허용
+      CORS_ALLOWED_ORIGINS: "http://localhost:5173,http://localhost:3000"
+      # OAuth/JWT 는 호스트 .env 가 있으면 그 값을, 없으면 로컬 전용 기본값을 사용
+      JWT_SECRET: "${JWT_SECRET:-local-dev-only-secret-at-least-256-bits-long-for-hs256-placeholder}"
+      GOOGLE_CLIENT_ID: "${GOOGLE_CLIENT_ID:-}"
+      GOOGLE_CLIENT_SECRET: "${GOOGLE_CLIENT_SECRET:-}"
+      JWT_COOKIE_SAME_SITE: "Lax"
+      JWT_COOKIE_SECURE: "false"
 
 volumes:
   postgres-data:
