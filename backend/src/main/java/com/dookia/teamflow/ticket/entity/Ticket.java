@@ -1,4 +1,4 @@
-package com.dookia.teamflow.issue.entity;
+package com.dookia.teamflow.ticket.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,19 +21,19 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * ISSUE 엔티티. Sprint 2 §2.2. 칸반 보드 이슈의 단일 레코드.
+ * ISSUE 엔티티. Sprint 2 §2.2. 칸반 보드 티켓의 단일 레코드.
  * 삭제는 delete_date 를 채우는 soft delete 로 수행한다 (RISK-IMPACT 결정 2026-04-20).
  */
 @Entity
 @Table(
-    name = "issue",
-    uniqueConstraints = @UniqueConstraint(name = "uk_issue_key", columnNames = {"project_no", "issue_key"})
+    name = "ticket",
+    uniqueConstraints = @UniqueConstraint(name = "uk_ticket_key", columnNames = {"project_no", "ticket_key"})
 )
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class Issue {
+public class Ticket {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,8 +43,8 @@ public class Issue {
     @Column(name = "project_no", nullable = false)
     private Long projectNo;
 
-    @Column(name = "issue_key", nullable = false, length = 20)
-    private String issueKey;
+    @Column(name = "ticket_key", nullable = false, length = 20)
+    private String ticketKey;
 
     @Column(nullable = false, length = 200)
     private String title;
@@ -54,14 +54,14 @@ public class Issue {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 15)
-    private IssueStatus status;
+    private TicketStatus status;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
-    private IssuePriority priority;
+    private TicketPriority priority;
 
-    @Column(name = "assignee_no")
-    private Long assigneeNo;
+    @Column(name = "assignee_user_no")
+    private Long assigneeUserNo;
 
     @Column(nullable = false)
     private int position;
@@ -88,10 +88,10 @@ public class Issue {
             updateDate = now;
         }
         if (status == null) {
-            status = IssueStatus.BACKLOG;
+            status = TicketStatus.BACKLOG;
         }
         if (priority == null) {
-            priority = IssuePriority.MEDIUM;
+            priority = TicketPriority.MEDIUM;
         }
     }
 
@@ -108,16 +108,16 @@ public class Issue {
         this.dueDate = dueDate;
     }
 
-    public void changeStatus(IssueStatus status) {
+    public void changeStatus(TicketStatus status) {
         this.status = status;
     }
 
-    public void changePriority(IssuePriority priority) {
+    public void changePriority(TicketPriority priority) {
         this.priority = priority;
     }
 
-    public void assignTo(Long assigneeNo) {
-        this.assigneeNo = assigneeNo;
+    public void assignTo(Long assigneeUserNo) {
+        this.assigneeUserNo = assigneeUserNo;
     }
 
     public void moveTo(int position) {
@@ -132,25 +132,25 @@ public class Issue {
         return this.deleteDate != null;
     }
 
-    public static Issue create(
+    public static Ticket create(
         Long projectNo,
-        String issueKey,
+        String ticketKey,
         String title,
         String description,
-        IssueStatus status,
-        IssuePriority priority,
-        Long assigneeNo,
+        TicketStatus status,
+        TicketPriority priority,
+        Long assigneeUserNo,
         LocalDate dueDate,
         int position
     ) {
-        return Issue.builder()
+        return Ticket.builder()
             .projectNo(projectNo)
-            .issueKey(issueKey)
+            .ticketKey(ticketKey)
             .title(title)
             .description(description)
-            .status(status != null ? status : IssueStatus.BACKLOG)
-            .priority(priority != null ? priority : IssuePriority.MEDIUM)
-            .assigneeNo(assigneeNo)
+            .status(status != null ? status : TicketStatus.BACKLOG)
+            .priority(priority != null ? priority : TicketPriority.MEDIUM)
+            .assigneeUserNo(assigneeUserNo)
             .dueDate(dueDate)
             .position(position)
             .build();

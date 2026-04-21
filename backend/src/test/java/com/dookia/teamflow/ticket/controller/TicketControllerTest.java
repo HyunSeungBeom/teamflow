@@ -1,11 +1,11 @@
-package com.dookia.teamflow.issue.controller;
+package com.dookia.teamflow.ticket.controller;
 
 import com.dookia.teamflow.auth.service.JwtService;
 import com.dookia.teamflow.exception.EntityNotFoundException;
-import com.dookia.teamflow.issue.dto.IssueDto;
-import com.dookia.teamflow.issue.entity.IssuePriority;
-import com.dookia.teamflow.issue.entity.IssueStatus;
-import com.dookia.teamflow.issue.service.IssueService;
+import com.dookia.teamflow.ticket.dto.TicketDto;
+import com.dookia.teamflow.ticket.entity.TicketPriority;
+import com.dookia.teamflow.ticket.entity.TicketStatus;
+import com.dookia.teamflow.ticket.service.TicketService;
 import com.dookia.teamflow.workspace.exception.WorkspaceAccessDeniedException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
@@ -37,14 +37,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = IssueController.class)
+@WebMvcTest(controllers = TicketController.class)
 @AutoConfigureMockMvc(addFilters = false)
-class IssueControllerTest {
+class TicketControllerTest {
 
     @Autowired MockMvc mockMvc;
     @Autowired ObjectMapper objectMapper;
 
-    @MockBean IssueService issueService;
+    @MockBean TicketService ticketService;
     @MockBean JwtService jwtService;
 
     @AfterEach
@@ -57,25 +57,25 @@ class IssueControllerTest {
             new UsernamePasswordAuthenticationToken(userNo, null, Collections.emptyList()));
     }
 
-    private IssueDto.Response sampleResponse(Long no, String key) {
-        return new IssueDto.Response(
+    private TicketDto.Response sampleResponse(Long no, String key) {
+        return new TicketDto.Response(
             no, 50L, key, "로그인 화면 구현", "desc",
-            IssueStatus.BACKLOG, IssuePriority.HIGH, null, 0, LocalDate.of(2026, 4, 25));
+            TicketStatus.BACKLOG, TicketPriority.HIGH, null, 0, LocalDate.of(2026, 4, 25));
     }
 
     @Test
-    @DisplayName("POST /api/projects/{projectNo}/issues → 201 + Response")
+    @DisplayName("POST /api/projects/{projectNo}/tickets → 201 + Response")
     void create_returns201() throws Exception {
         authenticatedAs(2L);
-        given(issueService.create(eq(50L), eq(2L), any(IssueDto.CreateRequest.class)))
+        given(ticketService.create(eq(50L), eq(2L), any(TicketDto.CreateRequest.class)))
             .willReturn(sampleResponse(101L, "TF-1"));
 
-        mockMvc.perform(post("/api/projects/50/issues")
+        mockMvc.perform(post("/api/projects/50/tickets")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"title\":\"로그인 화면 구현\",\"description\":\"desc\",\"priority\":\"HIGH\",\"dueDate\":\"2026-04-25\"}"))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.data.no", equalTo(101)))
-            .andExpect(jsonPath("$.data.issueKey", equalTo("TF-1")))
+            .andExpect(jsonPath("$.data.ticketKey", equalTo("TF-1")))
             .andExpect(jsonPath("$.data.status", equalTo("BACKLOG")));
     }
 
@@ -83,7 +83,7 @@ class IssueControllerTest {
     @DisplayName("POST create → 제목 1자는 400 (Size 검증)")
     void create_invalidTitle_returns400() throws Exception {
         authenticatedAs(2L);
-        mockMvc.perform(post("/api/projects/50/issues")
+        mockMvc.perform(post("/api/projects/50/tickets")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"title\":\"A\"}"))
             .andExpect(status().isBadRequest());
@@ -93,7 +93,7 @@ class IssueControllerTest {
     @DisplayName("POST create → 제목 누락은 400 (NotBlank)")
     void create_blankTitle_returns400() throws Exception {
         authenticatedAs(2L);
-        mockMvc.perform(post("/api/projects/50/issues")
+        mockMvc.perform(post("/api/projects/50/tickets")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{}"))
             .andExpect(status().isBadRequest());
@@ -103,10 +103,10 @@ class IssueControllerTest {
     @DisplayName("POST create → 프로젝트 없음(404)")
     void create_projectNotFound_returns404() throws Exception {
         authenticatedAs(2L);
-        given(issueService.create(eq(99L), eq(2L), any(IssueDto.CreateRequest.class)))
+        given(ticketService.create(eq(99L), eq(2L), any(TicketDto.CreateRequest.class)))
             .willThrow(new EntityNotFoundException("Project", 99L));
 
-        mockMvc.perform(post("/api/projects/99/issues")
+        mockMvc.perform(post("/api/projects/99/tickets")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"title\":\"제목있음\"}"))
             .andExpect(status().isNotFound());
@@ -116,98 +116,98 @@ class IssueControllerTest {
     @DisplayName("POST create → 비멤버(403)")
     void create_forbidden_returns403() throws Exception {
         authenticatedAs(99L);
-        given(issueService.create(eq(50L), eq(99L), any(IssueDto.CreateRequest.class)))
+        given(ticketService.create(eq(50L), eq(99L), any(TicketDto.CreateRequest.class)))
             .willThrow(new WorkspaceAccessDeniedException("워크스페이스 멤버가 아닙니다."));
 
-        mockMvc.perform(post("/api/projects/50/issues")
+        mockMvc.perform(post("/api/projects/50/tickets")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"title\":\"제목있음\"}"))
             .andExpect(status().isForbidden());
     }
 
     @Test
-    @DisplayName("GET /api/projects/{projectNo}/issues → 200 + 활성 이슈 목록")
+    @DisplayName("GET /api/projects/{projectNo}/tickets → 200 + 활성 티켓 목록")
     void list_returns200() throws Exception {
         authenticatedAs(2L);
-        given(issueService.listByProject(50L, 2L))
+        given(ticketService.listByProject(50L, 2L))
             .willReturn(List.of(sampleResponse(101L, "TF-1"), sampleResponse(102L, "TF-2")));
 
-        mockMvc.perform(get("/api/projects/50/issues"))
+        mockMvc.perform(get("/api/projects/50/tickets"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.data[0].issueKey", equalTo("TF-1")))
-            .andExpect(jsonPath("$.data[1].issueKey", equalTo("TF-2")));
+            .andExpect(jsonPath("$.data[0].ticketKey", equalTo("TF-1")))
+            .andExpect(jsonPath("$.data[1].ticketKey", equalTo("TF-2")));
     }
 
     @Test
-    @DisplayName("GET /api/issues/{issueNo} → 200 + 상세")
+    @DisplayName("GET /api/tickets/{ticketNo} → 200 + 상세")
     void get_returns200() throws Exception {
         authenticatedAs(2L);
-        given(issueService.get(101L, 2L)).willReturn(sampleResponse(101L, "TF-1"));
+        given(ticketService.get(101L, 2L)).willReturn(sampleResponse(101L, "TF-1"));
 
-        mockMvc.perform(get("/api/issues/101"))
+        mockMvc.perform(get("/api/tickets/101"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.data.no", equalTo(101)))
             .andExpect(jsonPath("$.data.priority", equalTo("HIGH")));
     }
 
     @Test
-    @DisplayName("GET /api/issues/{issueNo} → 없음 404")
+    @DisplayName("GET /api/tickets/{ticketNo} → 없음 404")
     void get_notFound_returns404() throws Exception {
         authenticatedAs(2L);
-        given(issueService.get(99L, 2L)).willThrow(new EntityNotFoundException("Issue", 99L));
+        given(ticketService.get(99L, 2L)).willThrow(new EntityNotFoundException("Ticket", 99L));
 
-        mockMvc.perform(get("/api/issues/99"))
+        mockMvc.perform(get("/api/tickets/99"))
             .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("PATCH /api/issues/{issueNo} → 200 + 부분 수정 Response")
+    @DisplayName("PATCH /api/tickets/{ticketNo} → 200 + 부분 수정 Response")
     void update_returns200() throws Exception {
         authenticatedAs(2L);
-        IssueDto.Response updated = new IssueDto.Response(
+        TicketDto.Response updated = new TicketDto.Response(
             101L, 50L, "TF-1", "로그인 화면 구현", "desc",
-            IssueStatus.IN_PROGRESS, IssuePriority.CRITICAL, 7L, 0, null);
-        given(issueService.update(eq(101L), eq(2L), any(IssueDto.UpdateRequest.class)))
+            TicketStatus.IN_PROGRESS, TicketPriority.CRITICAL, 7L, 0, null);
+        given(ticketService.update(eq(101L), eq(2L), any(TicketDto.UpdateRequest.class)))
             .willReturn(updated);
 
-        mockMvc.perform(patch("/api/issues/101")
+        mockMvc.perform(patch("/api/tickets/101")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"status\":\"IN_PROGRESS\",\"priority\":\"CRITICAL\",\"assigneeNo\":7}"))
+                .content("{\"status\":\"IN_PROGRESS\",\"priority\":\"CRITICAL\",\"assigneeUserNo\":7}"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.data.status", equalTo("IN_PROGRESS")))
-            .andExpect(jsonPath("$.data.assigneeNo", equalTo(7)));
+            .andExpect(jsonPath("$.data.assigneeUserNo", equalTo(7)));
     }
 
     @Test
-    @DisplayName("DELETE /api/issues/{issueNo} → 204")
+    @DisplayName("DELETE /api/tickets/{ticketNo} → 204")
     void delete_returns204() throws Exception {
         authenticatedAs(2L);
 
-        mockMvc.perform(delete("/api/issues/101"))
+        mockMvc.perform(delete("/api/tickets/101"))
             .andExpect(status().isNoContent());
 
-        verify(issueService).delete(101L, 2L);
+        verify(ticketService).delete(101L, 2L);
     }
 
     @Test
-    @DisplayName("DELETE /api/issues/{issueNo} → 없음 404")
+    @DisplayName("DELETE /api/tickets/{ticketNo} → 없음 404")
     void delete_notFound_returns404() throws Exception {
         authenticatedAs(2L);
-        willThrow(new EntityNotFoundException("Issue", 99L))
-            .given(issueService).delete(99L, 2L);
+        willThrow(new EntityNotFoundException("Ticket", 99L))
+            .given(ticketService).delete(99L, 2L);
 
-        mockMvc.perform(delete("/api/issues/99"))
+        mockMvc.perform(delete("/api/tickets/99"))
             .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("PATCH /api/issues/{issueNo}/status → 200 + StatusResponse")
+    @DisplayName("PATCH /api/tickets/{ticketNo}/status → 200 + StatusResponse")
     void changeStatus_returns200() throws Exception {
         authenticatedAs(2L);
-        given(issueService.changeStatus(101L, 2L, IssueStatus.IN_PROGRESS))
-            .willReturn(new IssueDto.StatusResponse(101L, IssueStatus.IN_PROGRESS));
+        given(ticketService.changeStatus(101L, 2L, TicketStatus.IN_PROGRESS))
+            .willReturn(new TicketDto.StatusResponse(101L, TicketStatus.IN_PROGRESS));
 
-        mockMvc.perform(patch("/api/issues/101/status")
+        mockMvc.perform(patch("/api/tickets/101/status")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"status\":\"IN_PROGRESS\"}"))
             .andExpect(status().isOk())
@@ -219,7 +219,7 @@ class IssueControllerTest {
     @DisplayName("PATCH /status → status 누락 400")
     void changeStatus_missingStatus_returns400() throws Exception {
         authenticatedAs(2L);
-        mockMvc.perform(patch("/api/issues/101/status")
+        mockMvc.perform(patch("/api/tickets/101/status")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{}"))
             .andExpect(status().isBadRequest());
@@ -229,33 +229,33 @@ class IssueControllerTest {
     @DisplayName("PATCH /status → 잘못된 enum 400")
     void changeStatus_invalidEnum_returns400() throws Exception {
         authenticatedAs(2L);
-        mockMvc.perform(patch("/api/issues/101/status")
+        mockMvc.perform(patch("/api/tickets/101/status")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"status\":\"NOT_A_STATUS\"}"))
             .andExpect(status().isBadRequest());
     }
 
     @Test
-    @DisplayName("PATCH /status → 없는 이슈 404")
+    @DisplayName("PATCH /status → 없는 티켓 404")
     void changeStatus_notFound_returns404() throws Exception {
         authenticatedAs(2L);
-        given(issueService.changeStatus(99L, 2L, IssueStatus.DONE))
-            .willThrow(new EntityNotFoundException("Issue", 99L));
+        given(ticketService.changeStatus(99L, 2L, TicketStatus.DONE))
+            .willThrow(new EntityNotFoundException("Ticket", 99L));
 
-        mockMvc.perform(patch("/api/issues/99/status")
+        mockMvc.perform(patch("/api/tickets/99/status")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"status\":\"DONE\"}"))
             .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("PATCH /api/issues/{issueNo}/position → 200 + PositionResponse")
+    @DisplayName("PATCH /api/tickets/{ticketNo}/position → 200 + PositionResponse")
     void changePosition_returns200() throws Exception {
         authenticatedAs(2L);
-        given(issueService.changePosition(101L, 2L, 5))
-            .willReturn(new IssueDto.PositionResponse(101L, 5));
+        given(ticketService.changePosition(101L, 2L, 5))
+            .willReturn(new TicketDto.PositionResponse(101L, 5));
 
-        mockMvc.perform(patch("/api/issues/101/position")
+        mockMvc.perform(patch("/api/tickets/101/position")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"position\":5}"))
             .andExpect(status().isOk())
@@ -267,7 +267,7 @@ class IssueControllerTest {
     @DisplayName("PATCH /position → 음수 400")
     void changePosition_negative_returns400() throws Exception {
         authenticatedAs(2L);
-        mockMvc.perform(patch("/api/issues/101/position")
+        mockMvc.perform(patch("/api/tickets/101/position")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"position\":-1}"))
             .andExpect(status().isBadRequest());
@@ -277,7 +277,7 @@ class IssueControllerTest {
     @DisplayName("PATCH /position → 누락 400")
     void changePosition_missing_returns400() throws Exception {
         authenticatedAs(2L);
-        mockMvc.perform(patch("/api/issues/101/position")
+        mockMvc.perform(patch("/api/tickets/101/position")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{}"))
             .andExpect(status().isBadRequest());

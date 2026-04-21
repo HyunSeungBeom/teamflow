@@ -1,11 +1,11 @@
-package com.dookia.teamflow.issue.service;
+package com.dookia.teamflow.ticket.service;
 
 import com.dookia.teamflow.exception.EntityNotFoundException;
-import com.dookia.teamflow.issue.dto.IssueDto;
-import com.dookia.teamflow.issue.entity.Issue;
-import com.dookia.teamflow.issue.entity.IssuePriority;
-import com.dookia.teamflow.issue.entity.IssueStatus;
-import com.dookia.teamflow.issue.repository.IssueRepository;
+import com.dookia.teamflow.ticket.dto.TicketDto;
+import com.dookia.teamflow.ticket.entity.Ticket;
+import com.dookia.teamflow.ticket.entity.TicketPriority;
+import com.dookia.teamflow.ticket.entity.TicketStatus;
+import com.dookia.teamflow.ticket.repository.TicketRepository;
 import com.dookia.teamflow.project.entity.Project;
 import com.dookia.teamflow.project.repository.ProjectRepository;
 import com.dookia.teamflow.workspace.exception.WorkspaceAccessDeniedException;
@@ -31,35 +31,35 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class IssueServiceTest {
+class TicketServiceTest {
 
-    @Mock IssueRepository issueRepository;
+    @Mock TicketRepository ticketRepository;
     @Mock ProjectRepository projectRepository;
     @Mock WorkspaceMemberRepository workspaceMemberRepository;
 
-    @InjectMocks IssueService issueService;
+    @InjectMocks TicketService ticketService;
 
     @Test
-    @DisplayName("create → ticket_counter 증가 + issueKey 조립(TF-1) + Issue 저장")
+    @DisplayName("create → ticket_counter 증가 + ticketKey 조립(TF-1) + Ticket 저장")
     void create_success_assemblesIssueKey() {
         Project project = injectProjectNo(
             Project.create(10L, "TeamFlow", "TF", null, null), 50L);
         given(projectRepository.findById(50L)).willReturn(Optional.of(project));
         given(workspaceMemberRepository.existsByWorkspaceNoAndUserNo(10L, 2L)).willReturn(true);
-        given(issueRepository.save(any(Issue.class)))
-            .willAnswer(inv -> injectIssueNo(inv.getArgument(0, Issue.class), 100L));
+        given(ticketRepository.save(any(Ticket.class)))
+            .willAnswer(inv -> injectIssueNo(inv.getArgument(0, Ticket.class), 100L));
 
-        IssueDto.Response res = issueService.create(50L, 2L, new IssueDto.CreateRequest(
-            "로그인 화면 구현", "desc", null, IssuePriority.HIGH, null, LocalDate.of(2026, 4, 25)));
+        TicketDto.Response res = ticketService.create(50L, 2L, new TicketDto.CreateRequest(
+            "로그인 화면 구현", "desc", null, TicketPriority.HIGH, null, LocalDate.of(2026, 4, 25)));
 
         assertThat(res.no()).isEqualTo(100L);
-        assertThat(res.issueKey()).isEqualTo("TF-1");
-        assertThat(res.status()).isEqualTo(IssueStatus.BACKLOG);
-        assertThat(res.priority()).isEqualTo(IssuePriority.HIGH);
+        assertThat(res.ticketKey()).isEqualTo("TF-1");
+        assertThat(res.status()).isEqualTo(TicketStatus.BACKLOG);
+        assertThat(res.priority()).isEqualTo(TicketPriority.HIGH);
         assertThat(project.getTicketCounter()).isEqualTo(1);
 
-        ArgumentCaptor<Issue> captor = ArgumentCaptor.forClass(Issue.class);
-        verify(issueRepository).save(captor.capture());
+        ArgumentCaptor<Ticket> captor = ArgumentCaptor.forClass(Ticket.class);
+        verify(ticketRepository).save(captor.capture());
         assertThat(captor.getValue().getIssueKey()).isEqualTo("TF-1");
         assertThat(captor.getValue().getProjectNo()).isEqualTo(50L);
     }
@@ -71,16 +71,16 @@ class IssueServiceTest {
             Project.create(10L, "TeamFlow", "TF", null, null), 50L);
         given(projectRepository.findById(50L)).willReturn(Optional.of(project));
         given(workspaceMemberRepository.existsByWorkspaceNoAndUserNo(10L, 2L)).willReturn(true);
-        given(issueRepository.save(any(Issue.class)))
-            .willAnswer(inv -> inv.getArgument(0, Issue.class));
+        given(ticketRepository.save(any(Ticket.class)))
+            .willAnswer(inv -> inv.getArgument(0, Ticket.class));
 
-        IssueDto.Response first = issueService.create(50L, 2L,
-            new IssueDto.CreateRequest("A", null, null, null, null, null));
-        IssueDto.Response second = issueService.create(50L, 2L,
-            new IssueDto.CreateRequest("B", null, null, null, null, null));
+        TicketDto.Response first = ticketService.create(50L, 2L,
+            new TicketDto.CreateRequest("A", null, null, null, null, null));
+        TicketDto.Response second = ticketService.create(50L, 2L,
+            new TicketDto.CreateRequest("B", null, null, null, null, null));
 
-        assertThat(first.issueKey()).isEqualTo("TF-1");
-        assertThat(second.issueKey()).isEqualTo("TF-2");
+        assertThat(first.ticketKey()).isEqualTo("TF-1");
+        assertThat(second.ticketKey()).isEqualTo("TF-2");
     }
 
     @Test
@@ -88,11 +88,11 @@ class IssueServiceTest {
     void create_missingProject_throws() {
         given(projectRepository.findById(99L)).willReturn(Optional.empty());
 
-        assertThatThrownBy(() -> issueService.create(99L, 2L,
-            new IssueDto.CreateRequest("A", null, null, null, null, null)))
+        assertThatThrownBy(() -> ticketService.create(99L, 2L,
+            new TicketDto.CreateRequest("A", null, null, null, null, null)))
             .isInstanceOf(EntityNotFoundException.class);
 
-        verify(issueRepository, never()).save(any());
+        verify(ticketRepository, never()).save(any());
     }
 
     @Test
@@ -102,35 +102,35 @@ class IssueServiceTest {
         given(projectRepository.findById(50L)).willReturn(Optional.of(project));
         given(workspaceMemberRepository.existsByWorkspaceNoAndUserNo(10L, 99L)).willReturn(false);
 
-        assertThatThrownBy(() -> issueService.create(50L, 99L,
-            new IssueDto.CreateRequest("A", null, null, null, null, null)))
+        assertThatThrownBy(() -> ticketService.create(50L, 99L,
+            new TicketDto.CreateRequest("A", null, null, null, null, null)))
             .isInstanceOf(WorkspaceAccessDeniedException.class);
 
-        verify(issueRepository, never()).save(any());
+        verify(ticketRepository, never()).save(any());
     }
 
     @Test
-    @DisplayName("listByProject → position 오름차순으로 활성 이슈만 반환")
+    @DisplayName("listByProject → position 오름차순으로 활성 티켓만 반환")
     void listByProject_returnsActiveOnly() {
         Project project = injectProjectNo(Project.create(10L, "P", "TF", null, null), 50L);
-        Issue a = injectIssueNo(Issue.create(50L, "TF-1", "A", null, null, null, null, null, 0), 101L);
-        Issue b = injectIssueNo(Issue.create(50L, "TF-2", "B", null, null, null, null, null, 1), 102L);
+        Ticket a = injectIssueNo(Ticket.create(50L, "TF-1", "A", null, null, null, null, null, 0), 101L);
+        Ticket b = injectIssueNo(Ticket.create(50L, "TF-2", "B", null, null, null, null, null, 1), 102L);
         given(projectRepository.findById(50L)).willReturn(Optional.of(project));
         given(workspaceMemberRepository.existsByWorkspaceNoAndUserNo(10L, 2L)).willReturn(true);
-        given(issueRepository.findAllByProjectNoAndDeleteDateIsNullOrderByPositionAsc(50L))
+        given(ticketRepository.findAllByProjectNoAndDeleteDateIsNullOrderByPositionAsc(50L))
             .willReturn(List.of(a, b));
 
-        List<IssueDto.Response> list = issueService.listByProject(50L, 2L);
+        List<TicketDto.Response> list = ticketService.listByProject(50L, 2L);
 
-        assertThat(list).extracting(IssueDto.Response::issueKey).containsExactly("TF-1", "TF-2");
+        assertThat(list).extracting(TicketDto.Response::ticketKey).containsExactly("TF-1", "TF-2");
     }
 
     @Test
-    @DisplayName("get → soft delete 된 이슈는 EntityNotFoundException")
+    @DisplayName("get → soft delete 된 티켓는 EntityNotFoundException")
     void get_softDeleted_throws() {
-        given(issueRepository.findByNoAndDeleteDateIsNull(99L)).willReturn(Optional.empty());
+        given(ticketRepository.findByNoAndDeleteDateIsNull(99L)).willReturn(Optional.empty());
 
-        assertThatThrownBy(() -> issueService.get(99L, 2L))
+        assertThatThrownBy(() -> ticketService.get(99L, 2L))
             .isInstanceOf(EntityNotFoundException.class);
     }
 
@@ -138,19 +138,19 @@ class IssueServiceTest {
     @DisplayName("update → 부분 수정: null 필드는 그대로, 지정된 필드만 반영")
     void update_partialFields() {
         Project project = injectProjectNo(Project.create(10L, "P", "TF", null, null), 50L);
-        Issue issue = injectIssueNo(Issue.create(
+        Ticket ticket = injectIssueNo(Ticket.create(
             50L, "TF-1", "원래제목", "원래설명",
-            IssueStatus.BACKLOG, IssuePriority.MEDIUM, null, null, 0), 101L);
-        given(issueRepository.findByNoAndDeleteDateIsNull(101L)).willReturn(Optional.of(issue));
+            TicketStatus.BACKLOG, TicketPriority.MEDIUM, null, null, 0), 101L);
+        given(ticketRepository.findByNoAndDeleteDateIsNull(101L)).willReturn(Optional.of(ticket));
         given(projectRepository.findById(50L)).willReturn(Optional.of(project));
         given(workspaceMemberRepository.existsByWorkspaceNoAndUserNo(10L, 2L)).willReturn(true);
 
-        IssueDto.Response res = issueService.update(101L, 2L, new IssueDto.UpdateRequest(
-            null, null, IssueStatus.IN_PROGRESS, IssuePriority.HIGH, 7L, null));
+        TicketDto.Response res = ticketService.update(101L, 2L, new TicketDto.UpdateRequest(
+            null, null, TicketStatus.IN_PROGRESS, TicketPriority.HIGH, 7L, null));
 
-        assertThat(res.status()).isEqualTo(IssueStatus.IN_PROGRESS);
-        assertThat(res.priority()).isEqualTo(IssuePriority.HIGH);
-        assertThat(res.assigneeNo()).isEqualTo(7L);
+        assertThat(res.status()).isEqualTo(TicketStatus.IN_PROGRESS);
+        assertThat(res.priority()).isEqualTo(TicketPriority.HIGH);
+        assertThat(res.assigneeUserNo()).isEqualTo(7L);
         assertThat(res.title()).isEqualTo("원래제목");
     }
 
@@ -158,24 +158,24 @@ class IssueServiceTest {
     @DisplayName("delete → softDelete 호출 + deleteDate 세팅")
     void delete_setsSoftDeleteMarker() {
         Project project = injectProjectNo(Project.create(10L, "P", "TF", null, null), 50L);
-        Issue issue = injectIssueNo(Issue.create(
+        Ticket ticket = injectIssueNo(Ticket.create(
             50L, "TF-1", "A", null, null, null, null, null, 0), 101L);
-        given(issueRepository.findByNoAndDeleteDateIsNull(101L)).willReturn(Optional.of(issue));
+        given(ticketRepository.findByNoAndDeleteDateIsNull(101L)).willReturn(Optional.of(ticket));
         given(projectRepository.findById(50L)).willReturn(Optional.of(project));
         given(workspaceMemberRepository.existsByWorkspaceNoAndUserNo(10L, 2L)).willReturn(true);
 
-        issueService.delete(101L, 2L);
+        ticketService.delete(101L, 2L);
 
-        assertThat(issue.isDeleted()).isTrue();
-        assertThat(issue.getDeleteDate()).isNotNull();
+        assertThat(ticket.isDeleted()).isTrue();
+        assertThat(ticket.getDeleteDate()).isNotNull();
     }
 
     @Test
-    @DisplayName("delete → 이슈 없으면 EntityNotFoundException")
+    @DisplayName("delete → 티켓 없으면 EntityNotFoundException")
     void delete_missing_throws() {
-        given(issueRepository.findByNoAndDeleteDateIsNull(99L)).willReturn(Optional.empty());
+        given(ticketRepository.findByNoAndDeleteDateIsNull(99L)).willReturn(Optional.empty());
 
-        assertThatThrownBy(() -> issueService.delete(99L, 2L))
+        assertThatThrownBy(() -> ticketService.delete(99L, 2L))
             .isInstanceOf(EntityNotFoundException.class);
     }
 
@@ -183,25 +183,25 @@ class IssueServiceTest {
     @DisplayName("changeStatus → BACKLOG → IN_PROGRESS 로 변경되고 StatusResponse 반환")
     void changeStatus_success() {
         Project project = injectProjectNo(Project.create(10L, "P", "TF", null, null), 50L);
-        Issue issue = injectIssueNo(Issue.create(
-            50L, "TF-1", "A", null, IssueStatus.BACKLOG, null, null, null, 0), 101L);
-        given(issueRepository.findByNoAndDeleteDateIsNull(101L)).willReturn(Optional.of(issue));
+        Ticket ticket = injectIssueNo(Ticket.create(
+            50L, "TF-1", "A", null, TicketStatus.BACKLOG, null, null, null, 0), 101L);
+        given(ticketRepository.findByNoAndDeleteDateIsNull(101L)).willReturn(Optional.of(ticket));
         given(projectRepository.findById(50L)).willReturn(Optional.of(project));
         given(workspaceMemberRepository.existsByWorkspaceNoAndUserNo(10L, 2L)).willReturn(true);
 
-        IssueDto.StatusResponse res = issueService.changeStatus(101L, 2L, IssueStatus.IN_PROGRESS);
+        TicketDto.StatusResponse res = ticketService.changeStatus(101L, 2L, TicketStatus.IN_PROGRESS);
 
         assertThat(res.no()).isEqualTo(101L);
-        assertThat(res.status()).isEqualTo(IssueStatus.IN_PROGRESS);
-        assertThat(issue.getStatus()).isEqualTo(IssueStatus.IN_PROGRESS);
+        assertThat(res.status()).isEqualTo(TicketStatus.IN_PROGRESS);
+        assertThat(ticket.getStatus()).isEqualTo(TicketStatus.IN_PROGRESS);
     }
 
     @Test
-    @DisplayName("changeStatus → 없는 이슈 404")
+    @DisplayName("changeStatus → 없는 티켓 404")
     void changeStatus_missing_throws() {
-        given(issueRepository.findByNoAndDeleteDateIsNull(99L)).willReturn(Optional.empty());
+        given(ticketRepository.findByNoAndDeleteDateIsNull(99L)).willReturn(Optional.empty());
 
-        assertThatThrownBy(() -> issueService.changeStatus(99L, 2L, IssueStatus.DONE))
+        assertThatThrownBy(() -> ticketService.changeStatus(99L, 2L, TicketStatus.DONE))
             .isInstanceOf(EntityNotFoundException.class);
     }
 
@@ -209,13 +209,13 @@ class IssueServiceTest {
     @DisplayName("changeStatus → 비멤버 403")
     void changeStatus_nonMember_denied() {
         Project project = injectProjectNo(Project.create(10L, "P", "TF", null, null), 50L);
-        Issue issue = injectIssueNo(Issue.create(
+        Ticket ticket = injectIssueNo(Ticket.create(
             50L, "TF-1", "A", null, null, null, null, null, 0), 101L);
-        given(issueRepository.findByNoAndDeleteDateIsNull(101L)).willReturn(Optional.of(issue));
+        given(ticketRepository.findByNoAndDeleteDateIsNull(101L)).willReturn(Optional.of(ticket));
         given(projectRepository.findById(50L)).willReturn(Optional.of(project));
         given(workspaceMemberRepository.existsByWorkspaceNoAndUserNo(10L, 99L)).willReturn(false);
 
-        assertThatThrownBy(() -> issueService.changeStatus(101L, 99L, IssueStatus.DONE))
+        assertThatThrownBy(() -> ticketService.changeStatus(101L, 99L, TicketStatus.DONE))
             .isInstanceOf(WorkspaceAccessDeniedException.class);
     }
 
@@ -223,25 +223,25 @@ class IssueServiceTest {
     @DisplayName("changePosition → 0 → 5 로 이동되고 PositionResponse 반환")
     void changePosition_success() {
         Project project = injectProjectNo(Project.create(10L, "P", "TF", null, null), 50L);
-        Issue issue = injectIssueNo(Issue.create(
+        Ticket ticket = injectIssueNo(Ticket.create(
             50L, "TF-1", "A", null, null, null, null, null, 0), 101L);
-        given(issueRepository.findByNoAndDeleteDateIsNull(101L)).willReturn(Optional.of(issue));
+        given(ticketRepository.findByNoAndDeleteDateIsNull(101L)).willReturn(Optional.of(ticket));
         given(projectRepository.findById(50L)).willReturn(Optional.of(project));
         given(workspaceMemberRepository.existsByWorkspaceNoAndUserNo(10L, 2L)).willReturn(true);
 
-        IssueDto.PositionResponse res = issueService.changePosition(101L, 2L, 5);
+        TicketDto.PositionResponse res = ticketService.changePosition(101L, 2L, 5);
 
         assertThat(res.no()).isEqualTo(101L);
         assertThat(res.position()).isEqualTo(5);
-        assertThat(issue.getPosition()).isEqualTo(5);
+        assertThat(ticket.getPosition()).isEqualTo(5);
     }
 
     @Test
-    @DisplayName("changePosition → soft delete 된 이슈는 조회되지 않아 404")
+    @DisplayName("changePosition → soft delete 된 티켓는 조회되지 않아 404")
     void changePosition_softDeleted_throws() {
-        given(issueRepository.findByNoAndDeleteDateIsNull(101L)).willReturn(Optional.empty());
+        given(ticketRepository.findByNoAndDeleteDateIsNull(101L)).willReturn(Optional.empty());
 
-        assertThatThrownBy(() -> issueService.changePosition(101L, 2L, 3))
+        assertThatThrownBy(() -> ticketService.changePosition(101L, 2L, 3))
             .isInstanceOf(EntityNotFoundException.class);
     }
 
@@ -258,9 +258,9 @@ class IssueServiceTest {
         return p;
     }
 
-    private static Issue injectIssueNo(Issue i, long no) {
+    private static Ticket injectIssueNo(Ticket i, long no) {
         try {
-            Field f = Issue.class.getDeclaredField("no");
+            Field f = Ticket.class.getDeclaredField("no");
             f.setAccessible(true);
             f.set(i, no);
         } catch (ReflectiveOperationException e) {
