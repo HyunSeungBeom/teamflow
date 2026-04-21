@@ -1,3 +1,5 @@
 export { WorkspaceModal } from './ui/WorkspaceModal'
 export { useCreateWorkspace } from './model/useCreateWorkspace'
+export { useWorkspaces } from './model/useWorkspaces'
+export { useWorkspace } from './model/useWorkspace'
 export { workspaceApi } from './api/workspaceApi'
