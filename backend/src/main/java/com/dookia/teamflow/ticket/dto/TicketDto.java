@@ -57,12 +57,12 @@ public class TicketDto {
             return new Response(
                 ticket.getNo(),
                 ticket.getProjectNo(),
-                ticket.getIssueKey(),
+                ticket.getTicketKey(),
                 ticket.getTitle(),
                 ticket.getDescription(),
                 ticket.getStatus(),
                 ticket.getPriority(),
-                ticket.getAssigneeNo(),
+                ticket.getAssigneeUserNo(),
                 ticket.getPosition(),
                 ticket.getDueDate()
             );

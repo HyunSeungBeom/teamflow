@@ -12,5 +12,5 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
     Optional<Ticket> findByNoAndDeleteDateIsNull(Long no);
 
-    boolean existsByProjectNoAndIssueKey(Long projectNo, String ticketKey);
+    boolean existsByProjectNoAndTicketKey(Long projectNo, String ticketKey);
 }
