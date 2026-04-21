@@ -8,9 +8,7 @@ import java.util.Optional;
 
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
-    List<Ticket> findAllByProjectNoAndDeleteDateIsNullOrderByPositionAsc(Long projectNo);
+    List<Ticket> findAllByProjectNoAndDeleteDateIsNullOrderByPositionAscNoDesc(Long projectNo);
 
     Optional<Ticket> findByNoAndDeleteDateIsNull(Long no);
-
-    boolean existsByProjectNoAndTicketKey(Long projectNo, String ticketKey);
 }

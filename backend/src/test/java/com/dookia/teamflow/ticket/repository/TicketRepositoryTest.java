@@ -45,18 +45,19 @@ class TicketRepositoryTest {
         Project project = persistProject("TF");
 
         Ticket saved = ticketRepository.save(
-            Ticket.create(project.getNo(), "TF-1", "로그인 화면 구현", null, null, null, null, null, 0));
+            Ticket.create(project.getWorkspaceNo(), project.getNo(), "TF-1", "로그인 화면 구현", null, null, null, null, null, 0));
         em.flush();
         em.clear();
 
         Ticket found = ticketRepository.findById(saved.getNo()).orElseThrow();
+        assertThat(found.getWorkspaceNo()).isEqualTo(project.getWorkspaceNo());
         assertThat(found.getProjectNo()).isEqualTo(project.getNo());
-        assertThat(found.getIssueKey()).isEqualTo("TF-1");
+        assertThat(found.getTicketKey()).isEqualTo("TF-1");
         assertThat(found.getTitle()).isEqualTo("로그인 화면 구현");
         assertThat(found.getStatus()).isEqualTo(TicketStatus.BACKLOG);
         assertThat(found.getPriority()).isEqualTo(TicketPriority.MEDIUM);
         assertThat(found.getPosition()).isZero();
-        assertThat(found.getAssigneeNo()).isNull();
+        assertThat(found.getAssigneeUserNo()).isNull();
         assertThat(found.getDueDate()).isNull();
         assertThat(found.getDeleteDate()).isNull();
         assertThat(found.getCreateDate()).isNotNull();
@@ -71,7 +72,7 @@ class TicketRepositoryTest {
             User.createFromOAuth(UserProvider.GOOGLE, "sub-1", "a@x.com", "Alice", null));
 
         Ticket saved = ticketRepository.save(Ticket.create(
-            project.getNo(), "AA-1", "긴급 핫픽스", "서버 500 에러",
+            project.getWorkspaceNo(), project.getNo(), "AA-1", "긴급 핫픽스", "서버 500 에러",
             TicketStatus.IN_PROGRESS, TicketPriority.CRITICAL, assignee.getNo(),
             LocalDate.of(2026, 4, 25), 3));
         em.flush();
@@ -81,43 +82,61 @@ class TicketRepositoryTest {
         assertThat(found.getDescription()).isEqualTo("서버 500 에러");
         assertThat(found.getStatus()).isEqualTo(TicketStatus.IN_PROGRESS);
         assertThat(found.getPriority()).isEqualTo(TicketPriority.CRITICAL);
-        assertThat(found.getAssigneeNo()).isEqualTo(assignee.getNo());
+        assertThat(found.getAssigneeUserNo()).isEqualTo(assignee.getNo());
         assertThat(found.getDueDate()).isEqualTo(LocalDate.of(2026, 4, 25));
         assertThat(found.getPosition()).isEqualTo(3);
     }
 
     @Test
     @DisplayName("UNIQUE(project_no, ticket_key) — 같은 프로젝트 내 key 중복 저장 불가")
-    void unique_projectNoAndIssueKey() {
+    void unique_projectNoAndTicketKey() {
         Project project = persistProject("TF");
-        ticketRepository.save(Ticket.create(project.getNo(), "TF-1", "A", null, null, null, null, null, 0));
+        ticketRepository.save(Ticket.create(project.getWorkspaceNo(), project.getNo(), "TF-1", "A", null, null, null, null, null, 0));
         em.flush();
 
         assertThatThrownBy(() -> {
-            ticketRepository.save(Ticket.create(project.getNo(), "TF-1", "B", null, null, null, null, null, 0));
+            ticketRepository.save(Ticket.create(project.getWorkspaceNo(), project.getNo(), "TF-1", "B", null, null, null, null, null, 0));
             em.flush();
         }).isInstanceOf(DataIntegrityViolationException.class);
     }
 
     @Test
-    @DisplayName("findAllByProjectNoAndDeleteDateIsNullOrderByPositionAsc — 활성 티켓만 position 오름차순")
+    @DisplayName("findAllByProjectNoAndDeleteDateIsNullOrderByPositionAscNoDesc — 활성 티켓만 position 오름차순")
     void findActiveInProject_orderedByPosition() {
         Project project = persistProject("TF");
 
         Ticket second = ticketRepository.save(
-            Ticket.create(project.getNo(), "TF-1", "두번째", null, null, null, null, null, 2));
+            Ticket.create(project.getWorkspaceNo(), project.getNo(), "TF-1", "두번째", null, null, null, null, null, 2));
         Ticket first = ticketRepository.save(
-            Ticket.create(project.getNo(), "TF-2", "첫번째", null, null, null, null, null, 0));
+            Ticket.create(project.getWorkspaceNo(), project.getNo(), "TF-2", "첫번째", null, null, null, null, null, 0));
         Ticket deleted = ticketRepository.save(
-            Ticket.create(project.getNo(), "TF-3", "지울거", null, null, null, null, null, 1));
+            Ticket.create(project.getWorkspaceNo(), project.getNo(), "TF-3", "지울거", null, null, null, null, null, 1));
         deleted.softDelete();
         em.flush();
         em.clear();
 
-        List<Ticket> list = ticketRepository.findAllByProjectNoAndDeleteDateIsNullOrderByPositionAsc(project.getNo());
+        List<Ticket> list = ticketRepository.findAllByProjectNoAndDeleteDateIsNullOrderByPositionAscNoDesc(project.getNo());
         assertThat(list)
-            .extracting(Ticket::getIssueKey)
-            .containsExactly(first.getIssueKey(), second.getIssueKey());
+            .extracting(Ticket::getTicketKey)
+            .containsExactly(first.getTicketKey(), second.getTicketKey());
+    }
+
+    @Test
+    @DisplayName("같은 position 이면 no DESC (새로 만든 티켓이 위)")
+    void findActiveInProject_tieBreakerByNoDesc() {
+        Project project = persistProject("TF");
+
+        Ticket older = ticketRepository.save(
+            Ticket.create(project.getWorkspaceNo(), project.getNo(), "TF-1", "먼저 만든 것", null, null, null, null, null, 0));
+        Ticket newer = ticketRepository.save(
+            Ticket.create(project.getWorkspaceNo(), project.getNo(), "TF-2", "나중에 만든 것", null, null, null, null, null, 0));
+        em.flush();
+        em.clear();
+
+        List<Ticket> list = ticketRepository.findAllByProjectNoAndDeleteDateIsNullOrderByPositionAscNoDesc(project.getNo());
+        assertThat(list)
+            .extracting(Ticket::getTicketKey)
+            .containsExactly(newer.getTicketKey(), older.getTicketKey());
     }
 
     @Test
@@ -125,7 +144,7 @@ class TicketRepositoryTest {
     void findActiveById_excludesSoftDeleted() {
         Project project = persistProject("TF");
         Ticket ticket = ticketRepository.save(
-            Ticket.create(project.getNo(), "TF-1", "삭제될 티켓", null, null, null, null, null, 0));
+            Ticket.create(project.getWorkspaceNo(), project.getNo(), "TF-1", "삭제될 티켓", null, null, null, null, null, 0));
         em.flush();
 
         assertThat(ticketRepository.findByNoAndDeleteDateIsNull(ticket.getNo())).isPresent();
@@ -136,17 +155,5 @@ class TicketRepositoryTest {
 
         assertThat(ticketRepository.findByNoAndDeleteDateIsNull(ticket.getNo())).isEmpty();
         assertThat(ticketRepository.findById(ticket.getNo())).isPresent(); // 하드 조회는 남아 있음
-    }
-
-    @Test
-    @DisplayName("existsByProjectNoAndIssueKey — 프로젝트 내 ticketKey 사용 여부")
-    void existsByProjectNoAndIssueKey() {
-        Project project = persistProject("TF");
-        ticketRepository.save(Ticket.create(project.getNo(), "TF-1", "A", null, null, null, null, null, 0));
-        em.flush();
-        em.clear();
-
-        assertThat(ticketRepository.existsByProjectNoAndIssueKey(project.getNo(), "TF-1")).isTrue();
-        assertThat(ticketRepository.existsByProjectNoAndIssueKey(project.getNo(), "TF-2")).isFalse();
     }
 }

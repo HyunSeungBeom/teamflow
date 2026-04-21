@@ -27,6 +27,9 @@ import java.util.List;
  *  - GET    /api/tickets/{ticketNo}
  *  - PATCH  /api/tickets/{ticketNo}
  *  - DELETE /api/tickets/{ticketNo}
+ *  - PATCH  /api/tickets/{ticketNo}/status    (드래그 앤 드롭: 컬럼 간 이동)
+ *  - PATCH  /api/tickets/{ticketNo}/position  (같은 컬럼 내 순서 변경)
+ *  - DELETE /api/tickets/{ticketNo}/assignee  (담당자 해제 — PATCH 바디로 null 을 표현할 수 없어 분리)
  */
 @Tag(name = "Ticket", description = "티켓 CRUD (칸반 보드)")
 @RestController
@@ -77,5 +80,11 @@ public class TicketController {
     @PatchMapping("/api/tickets/{ticketNo}/position")
     public ApiResponse<TicketDto.PositionResponse> changePosition(@AuthenticationPrincipal Long userNo, @PathVariable Long ticketNo, @Valid @RequestBody TicketDto.PositionChangeRequest request) {
         return ApiResponse.success(ticketService.changePosition(ticketNo, userNo, request.position()));
+    }
+
+    @Operation(summary = "담당자 해제")
+    @DeleteMapping("/api/tickets/{ticketNo}/assignee")
+    public ApiResponse<TicketDto.Response> unassignAssignee(@AuthenticationPrincipal Long userNo, @PathVariable Long ticketNo) {
+        return ApiResponse.success(ticketService.unassignAssignee(ticketNo, userNo));
     }
 }

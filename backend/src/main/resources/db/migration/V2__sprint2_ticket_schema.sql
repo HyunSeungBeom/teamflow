@@ -11,9 +11,12 @@
 -- ============================================================================
 
 -- [1] ticket -----------------------------------------------------------------
+-- workspace_no 는 project.workspace_no 역정규화. 티켓 권한 검증 시 project join 을 생략하기 위함.
+--   (티켓은 프로젝트 간 이동이 없으므로 불변 역정규화 키.)
 CREATE TABLE ticket (
     no                 BIGSERIAL    PRIMARY KEY,
-    project_no         BIGINT       NOT NULL REFERENCES project(no) ON DELETE CASCADE,
+    workspace_no       BIGINT       NOT NULL REFERENCES workspace(no) ON DELETE CASCADE,
+    project_no         BIGINT       NOT NULL REFERENCES project(no)   ON DELETE CASCADE,
     ticket_key         VARCHAR(20)  NOT NULL,                   -- "TF-1", "TF-2" 형태
     title              VARCHAR(200) NOT NULL,
     description        TEXT             NULL,

@@ -282,4 +282,30 @@ class TicketControllerTest {
                 .content("{}"))
             .andExpect(status().isBadRequest());
     }
+
+    @Test
+    @DisplayName("DELETE /api/tickets/{ticketNo}/assignee → 200 + assigneeUserNo null")
+    void unassignAssignee_returns200() throws Exception {
+        authenticatedAs(2L);
+        TicketDto.Response unassigned = new TicketDto.Response(
+            101L, 50L, "TF-1", "로그인 화면 구현", "desc",
+            TicketStatus.BACKLOG, TicketPriority.HIGH, null, 0, LocalDate.of(2026, 4, 25));
+        given(ticketService.unassignAssignee(101L, 2L)).willReturn(unassigned);
+
+        mockMvc.perform(delete("/api/tickets/101/assignee"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.data.no", equalTo(101)))
+            .andExpect(jsonPath("$.data.assigneeUserNo").doesNotExist());
+    }
+
+    @Test
+    @DisplayName("DELETE /api/tickets/{ticketNo}/assignee → 없는 티켓 404")
+    void unassignAssignee_notFound_returns404() throws Exception {
+        authenticatedAs(2L);
+        given(ticketService.unassignAssignee(99L, 2L))
+            .willThrow(new EntityNotFoundException("Ticket", 99L));
+
+        mockMvc.perform(delete("/api/tickets/99/assignee"))
+            .andExpect(status().isNotFound());
+    }
 }

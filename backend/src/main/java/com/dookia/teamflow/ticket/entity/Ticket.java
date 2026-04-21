@@ -21,7 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * ISSUE 엔티티. Sprint 2 §2.2. 칸반 보드 티켓의 단일 레코드.
+ * TICKET 엔티티. Sprint 2 §2.2, ERD v0.1 §7. 칸반 보드 티켓의 단일 레코드.
  * 삭제는 delete_date 를 채우는 soft delete 로 수행한다 (RISK-IMPACT 결정 2026-04-20).
  */
 @Entity
@@ -39,6 +39,9 @@ public class Ticket {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "no")
     private Long no;
+
+    @Column(name = "workspace_no", nullable = false)
+    private Long workspaceNo;
 
     @Column(name = "project_no", nullable = false)
     private Long projectNo;
@@ -120,6 +123,10 @@ public class Ticket {
         this.assigneeUserNo = assigneeUserNo;
     }
 
+    public void unassign() {
+        this.assigneeUserNo = null;
+    }
+
     public void moveTo(int position) {
         this.position = position;
     }
@@ -133,6 +140,7 @@ public class Ticket {
     }
 
     public static Ticket create(
+        Long workspaceNo,
         Long projectNo,
         String ticketKey,
         String title,
@@ -144,6 +152,7 @@ public class Ticket {
         int position
     ) {
         return Ticket.builder()
+            .workspaceNo(workspaceNo)
             .projectNo(projectNo)
             .ticketKey(ticketKey)
             .title(title)

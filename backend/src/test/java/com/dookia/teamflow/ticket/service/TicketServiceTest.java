@@ -41,13 +41,13 @@ class TicketServiceTest {
 
     @Test
     @DisplayName("create → ticket_counter 증가 + ticketKey 조립(TF-1) + Ticket 저장")
-    void create_success_assemblesIssueKey() {
+    void create_success_assemblesTicketKey() {
         Project project = injectProjectNo(
             Project.create(10L, "TeamFlow", "TF", null, null), 50L);
         given(projectRepository.findById(50L)).willReturn(Optional.of(project));
         given(workspaceMemberRepository.existsByWorkspaceNoAndUserNo(10L, 2L)).willReturn(true);
         given(ticketRepository.save(any(Ticket.class)))
-            .willAnswer(inv -> injectIssueNo(inv.getArgument(0, Ticket.class), 100L));
+            .willAnswer(inv -> injectTicketNo(inv.getArgument(0, Ticket.class), 100L));
 
         TicketDto.Response res = ticketService.create(50L, 2L, new TicketDto.CreateRequest(
             "로그인 화면 구현", "desc", null, TicketPriority.HIGH, null, LocalDate.of(2026, 4, 25)));
@@ -60,13 +60,14 @@ class TicketServiceTest {
 
         ArgumentCaptor<Ticket> captor = ArgumentCaptor.forClass(Ticket.class);
         verify(ticketRepository).save(captor.capture());
-        assertThat(captor.getValue().getIssueKey()).isEqualTo("TF-1");
+        assertThat(captor.getValue().getTicketKey()).isEqualTo("TF-1");
         assertThat(captor.getValue().getProjectNo()).isEqualTo(50L);
+        assertThat(captor.getValue().getWorkspaceNo()).isEqualTo(10L);
     }
 
     @Test
     @DisplayName("create → 연속 생성 시 TF-1, TF-2 순차 발급")
-    void create_sequentialIssueKey() {
+    void create_sequentialTicketKey() {
         Project project = injectProjectNo(
             Project.create(10L, "TeamFlow", "TF", null, null), 50L);
         given(projectRepository.findById(50L)).willReturn(Optional.of(project));
@@ -113,11 +114,11 @@ class TicketServiceTest {
     @DisplayName("listByProject → position 오름차순으로 활성 티켓만 반환")
     void listByProject_returnsActiveOnly() {
         Project project = injectProjectNo(Project.create(10L, "P", "TF", null, null), 50L);
-        Ticket a = injectIssueNo(Ticket.create(50L, "TF-1", "A", null, null, null, null, null, 0), 101L);
-        Ticket b = injectIssueNo(Ticket.create(50L, "TF-2", "B", null, null, null, null, null, 1), 102L);
+        Ticket a = injectTicketNo(Ticket.create(10L, 50L, "TF-1", "A", null, null, null, null, null, 0), 101L);
+        Ticket b = injectTicketNo(Ticket.create(10L, 50L, "TF-2", "B", null, null, null, null, null, 1), 102L);
         given(projectRepository.findById(50L)).willReturn(Optional.of(project));
         given(workspaceMemberRepository.existsByWorkspaceNoAndUserNo(10L, 2L)).willReturn(true);
-        given(ticketRepository.findAllByProjectNoAndDeleteDateIsNullOrderByPositionAsc(50L))
+        given(ticketRepository.findAllByProjectNoAndDeleteDateIsNullOrderByPositionAscNoDesc(50L))
             .willReturn(List.of(a, b));
 
         List<TicketDto.Response> list = ticketService.listByProject(50L, 2L);
@@ -137,12 +138,10 @@ class TicketServiceTest {
     @Test
     @DisplayName("update → 부분 수정: null 필드는 그대로, 지정된 필드만 반영")
     void update_partialFields() {
-        Project project = injectProjectNo(Project.create(10L, "P", "TF", null, null), 50L);
-        Ticket ticket = injectIssueNo(Ticket.create(
-            50L, "TF-1", "원래제목", "원래설명",
+        Ticket ticket = injectTicketNo(Ticket.create(
+            10L, 50L, "TF-1", "원래제목", "원래설명",
             TicketStatus.BACKLOG, TicketPriority.MEDIUM, null, null, 0), 101L);
         given(ticketRepository.findByNoAndDeleteDateIsNull(101L)).willReturn(Optional.of(ticket));
-        given(projectRepository.findById(50L)).willReturn(Optional.of(project));
         given(workspaceMemberRepository.existsByWorkspaceNoAndUserNo(10L, 2L)).willReturn(true);
 
         TicketDto.Response res = ticketService.update(101L, 2L, new TicketDto.UpdateRequest(
@@ -157,11 +156,9 @@ class TicketServiceTest {
     @Test
     @DisplayName("delete → softDelete 호출 + deleteDate 세팅")
     void delete_setsSoftDeleteMarker() {
-        Project project = injectProjectNo(Project.create(10L, "P", "TF", null, null), 50L);
-        Ticket ticket = injectIssueNo(Ticket.create(
-            50L, "TF-1", "A", null, null, null, null, null, 0), 101L);
+        Ticket ticket = injectTicketNo(Ticket.create(
+            10L, 50L, "TF-1", "A", null, null, null, null, null, 0), 101L);
         given(ticketRepository.findByNoAndDeleteDateIsNull(101L)).willReturn(Optional.of(ticket));
-        given(projectRepository.findById(50L)).willReturn(Optional.of(project));
         given(workspaceMemberRepository.existsByWorkspaceNoAndUserNo(10L, 2L)).willReturn(true);
 
         ticketService.delete(101L, 2L);
@@ -182,11 +179,9 @@ class TicketServiceTest {
     @Test
     @DisplayName("changeStatus → BACKLOG → IN_PROGRESS 로 변경되고 StatusResponse 반환")
     void changeStatus_success() {
-        Project project = injectProjectNo(Project.create(10L, "P", "TF", null, null), 50L);
-        Ticket ticket = injectIssueNo(Ticket.create(
-            50L, "TF-1", "A", null, TicketStatus.BACKLOG, null, null, null, 0), 101L);
+        Ticket ticket = injectTicketNo(Ticket.create(
+            10L, 50L, "TF-1", "A", null, TicketStatus.BACKLOG, null, null, null, 0), 101L);
         given(ticketRepository.findByNoAndDeleteDateIsNull(101L)).willReturn(Optional.of(ticket));
-        given(projectRepository.findById(50L)).willReturn(Optional.of(project));
         given(workspaceMemberRepository.existsByWorkspaceNoAndUserNo(10L, 2L)).willReturn(true);
 
         TicketDto.StatusResponse res = ticketService.changeStatus(101L, 2L, TicketStatus.IN_PROGRESS);
@@ -208,11 +203,9 @@ class TicketServiceTest {
     @Test
     @DisplayName("changeStatus → 비멤버 403")
     void changeStatus_nonMember_denied() {
-        Project project = injectProjectNo(Project.create(10L, "P", "TF", null, null), 50L);
-        Ticket ticket = injectIssueNo(Ticket.create(
-            50L, "TF-1", "A", null, null, null, null, null, 0), 101L);
+        Ticket ticket = injectTicketNo(Ticket.create(
+            10L, 50L, "TF-1", "A", null, null, null, null, null, 0), 101L);
         given(ticketRepository.findByNoAndDeleteDateIsNull(101L)).willReturn(Optional.of(ticket));
-        given(projectRepository.findById(50L)).willReturn(Optional.of(project));
         given(workspaceMemberRepository.existsByWorkspaceNoAndUserNo(10L, 99L)).willReturn(false);
 
         assertThatThrownBy(() -> ticketService.changeStatus(101L, 99L, TicketStatus.DONE))
@@ -222,11 +215,9 @@ class TicketServiceTest {
     @Test
     @DisplayName("changePosition → 0 → 5 로 이동되고 PositionResponse 반환")
     void changePosition_success() {
-        Project project = injectProjectNo(Project.create(10L, "P", "TF", null, null), 50L);
-        Ticket ticket = injectIssueNo(Ticket.create(
-            50L, "TF-1", "A", null, null, null, null, null, 0), 101L);
+        Ticket ticket = injectTicketNo(Ticket.create(
+            10L, 50L, "TF-1", "A", null, null, null, null, null, 0), 101L);
         given(ticketRepository.findByNoAndDeleteDateIsNull(101L)).willReturn(Optional.of(ticket));
-        given(projectRepository.findById(50L)).willReturn(Optional.of(project));
         given(workspaceMemberRepository.existsByWorkspaceNoAndUserNo(10L, 2L)).willReturn(true);
 
         TicketDto.PositionResponse res = ticketService.changePosition(101L, 2L, 5);
@@ -245,6 +236,29 @@ class TicketServiceTest {
             .isInstanceOf(EntityNotFoundException.class);
     }
 
+    @Test
+    @DisplayName("unassignAssignee → assigneeUserNo 를 null 로 되돌린다")
+    void unassignAssignee_clearsAssignee() {
+        Ticket ticket = injectTicketNo(Ticket.create(
+            10L, 50L, "TF-1", "A", null, null, null, 7L, null, 0), 101L);
+        given(ticketRepository.findByNoAndDeleteDateIsNull(101L)).willReturn(Optional.of(ticket));
+        given(workspaceMemberRepository.existsByWorkspaceNoAndUserNo(10L, 2L)).willReturn(true);
+
+        TicketDto.Response res = ticketService.unassignAssignee(101L, 2L);
+
+        assertThat(res.assigneeUserNo()).isNull();
+        assertThat(ticket.getAssigneeUserNo()).isNull();
+    }
+
+    @Test
+    @DisplayName("unassignAssignee → 없는 티켓 404")
+    void unassignAssignee_missing_throws() {
+        given(ticketRepository.findByNoAndDeleteDateIsNull(99L)).willReturn(Optional.empty());
+
+        assertThatThrownBy(() -> ticketService.unassignAssignee(99L, 2L))
+            .isInstanceOf(EntityNotFoundException.class);
+    }
+
     // ---------- helpers ----------
 
     private static Project injectProjectNo(Project p, long no) {
@@ -258,14 +272,14 @@ class TicketServiceTest {
         return p;
     }
 
-    private static Ticket injectIssueNo(Ticket i, long no) {
+    private static Ticket injectTicketNo(Ticket t, long no) {
         try {
             Field f = Ticket.class.getDeclaredField("no");
             f.setAccessible(true);
-            f.set(i, no);
+            f.set(t, no);
         } catch (ReflectiveOperationException e) {
             throw new IllegalStateException(e);
         }
-        return i;
+        return t;
     }
 }
