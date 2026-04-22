@@ -79,4 +79,18 @@
   --spacing-fluid-page-x: clamp(1.25rem, 0.5rem + 3vw, 5rem); /* 20px → 80px */
   --spacing-fluid-gap: clamp(2rem, 1rem + 2.5vw, 3.75rem); /* 32px → 60px */
   --spacing-fluid-py: clamp(2.5rem, 2rem + 3vw, 5rem); /* 40px → 80px */
+
+  /* ─── Animations ─── */
+  --animate-slide-in: slide-in 0.3s ease-out;
+
+  @keyframes slide-in {
+    from {
+      opacity: 0;
+      transform: translateX(1rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
 }

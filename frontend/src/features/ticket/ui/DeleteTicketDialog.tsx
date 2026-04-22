@@ -1,5 +1,6 @@
 import { Modal, Button } from '@/shared/ui'
 import { useDeleteTicket } from '../model/useDeleteTicket'
+import { toast } from '@/shared/model/useToastStore'
 import type { Ticket } from '@/entities/ticket'
 
 interface DeleteTicketDialogProps {
@@ -25,7 +26,7 @@ export function DeleteTicketDialog({
       await deleteTicket.mutateAsync({ ticketNo: ticket.no, projectNo })
       onSuccess()
     } catch {
-      // 에러 처리는 React Query의 onError에서 처리
+      toast.error('티켓 삭제에 실패했습니다.')
     }
   }
 

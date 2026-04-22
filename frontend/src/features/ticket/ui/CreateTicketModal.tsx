@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Modal, Button, Input, Select, Textarea, Spinner } from '@/shared/ui'
 import { useCreateTicket } from '../model/useCreateTicket'
+import { toast } from '@/shared/model/useToastStore'
 import type { TicketStatus } from '@/entities/ticket'
 
 const createTicketSchema = z.object({
@@ -70,8 +71,9 @@ export function CreateTicketModal({ isOpen, onClose, projectNo }: CreateTicketMo
       })
       reset()
       onClose()
+      toast.success('티켓이 생성되었습니다.')
     } catch {
-      // error handled by mutation state
+      toast.error('티켓 생성에 실패했습니다.')
     }
   }
 
@@ -109,10 +111,6 @@ export function CreateTicketModal({ isOpen, onClose, projectNo }: CreateTicketMo
           <Input label="기한 (선택)" type="date" {...register('dueDate')} />
           <div />
         </div>
-
-        {createTicket.isError && (
-          <p className="text-sm text-error">티켓 생성에 실패했습니다. 다시 시도해주세요.</p>
-        )}
 
         <div className="flex gap-3 pt-2">
           <Button type="button" variant="ghost" size="lg" className="flex-1" onClick={handleClose}>

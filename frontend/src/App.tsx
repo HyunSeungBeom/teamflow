@@ -4,6 +4,7 @@ import { QueryProvider } from '@/app/providers/QueryProvider'
 import { ProtectedRoute } from '@/app/routes/ProtectedRoute'
 import { PublicRoute } from '@/app/routes/PublicRoute'
 import { MainLayout } from '@/app/layouts/MainLayout'
+import { ToastContainer } from '@/shared/ui'
 import { LandingPage } from '@/pages/landing/LandingPage'
 import { LoginPage } from '@/pages/login/LoginPage'
 import { OAuthCallbackPage } from '@/pages/auth/callback/OAuthCallbackPage'
@@ -42,6 +43,7 @@ function App() {
             </Route>
           </Routes>
         </AuthProvider>
+        <ToastContainer />
       </QueryProvider>
     </BrowserRouter>
   )

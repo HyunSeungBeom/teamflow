@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Modal, Button, Input, Spinner } from '@/shared/ui'
 import { createWorkspaceSchema, type CreateWorkspaceFormData } from '../model/workspaceSchema'
 import { useCreateWorkspace } from '../model/useCreateWorkspace'
+import { toast } from '@/shared/model/useToastStore'
 
 interface WorkspaceModalProps {
   isOpen: boolean
@@ -33,8 +34,9 @@ export function WorkspaceModal({ isOpen, onClose, onSuccess }: WorkspaceModalPro
       reset()
       onSuccess?.(workspaceNo)
       onClose()
+      toast.success('워크스페이스가 생성되었습니다.')
     } catch {
-      // error는 mutation state로 처리
+      toast.error('워크스페이스 생성에 실패했습니다.')
     }
   }
 
@@ -55,10 +57,6 @@ export function WorkspaceModal({ isOpen, onClose, onSuccess }: WorkspaceModalPro
           error={errors.name?.message}
           {...register('name')}
         />
-
-        {createMutation.isError && (
-          <p className="text-sm text-error">워크스페이스 생성에 실패했습니다. 다시 시도해주세요.</p>
-        )}
 
         <Button
           type="submit"

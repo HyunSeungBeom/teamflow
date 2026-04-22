@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Modal, Button, Input, Spinner } from '@/shared/ui'
 import { createProjectSchema, type CreateProjectFormData } from '../model/projectSchema'
 import { useCreateProject } from '../model/useCreateProject'
+import { toast } from '@/shared/model/useToastStore'
 
 interface CreateProjectModalProps {
   isOpen: boolean
@@ -42,8 +43,9 @@ export function CreateProjectModal({ isOpen, onClose, workspaceNo }: CreateProje
       await createProject.mutateAsync({ workspaceNo, data: { name: data.name, key: data.key } })
       reset()
       onClose()
+      toast.success('프로젝트가 생성되었습니다.')
     } catch {
-      // error는 mutation state로 처리
+      toast.error('프로젝트 생성에 실패했습니다.')
     }
   }
 
@@ -73,10 +75,6 @@ export function CreateProjectModal({ isOpen, onClose, workspaceNo }: CreateProje
           {...register('key')}
         />
         <p className="text-xs text-gray-400 -mt-3">이슈 번호에 사용됩니다 (예: TF-1, TF-2)</p>
-
-        {createProject.isError && (
-          <p className="text-sm text-error">프로젝트 생성에 실패했습니다. 다시 시도해주세요.</p>
-        )}
 
         <div className="flex gap-3 pt-2">
           <Button type="button" variant="ghost" size="lg" className="flex-1" onClick={handleClose}>
