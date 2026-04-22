@@ -4,17 +4,22 @@
 #       전체 백엔드 스택(Postgres + Redis + API)을 로컬에서 띄울 수 있게 한다.
 #
 # 이미지: ghcr.io/dookia-team/teamflow-backend
-# 태그 규칙:
-#   - main    → latest, main, <short-sha>
-#   - sprint2 → sprint2, <short-sha>
-#   - develop → develop, <short-sha>
-#   - 수동 실행(workflow_dispatch) → 해당 브랜치명 + <short-sha>
+#
+# 트리거 정책:
+#   - push(develop) → :develop, :<short-sha>       (프론트 기본 연동 태그)
+#   - push(main)    → :main, :latest, :<short-sha> (안정 릴리스)
+#   - workflow_dispatch → 임의 브랜치(sprint3, feat/* 등) 수동 빌드
+#
+# sprint/feature 브랜치를 자동 대상에서 제외한 이유:
+#   sprint 브랜치는 rebase/force-push 가 빈번하여 "같은 태그, 다른 내용" 문제가 발생.
+#   프론트가 안정적으로 pull 할 수 있는 기준은 "통합 완료된 develop" 으로 고정한다.
+#   sprint 중간 산출물을 프론트에 노출해야 할 때만 Actions 탭 → Run workflow 로 수동 실행.
 
 name: build-backend-image
 
 on:
   push:
-    branches: [main, sprint2, develop]
+    branches: [main, develop]
     paths:
       - 'backend/**'
       - '.github/workflows/build-backend-image.yml'

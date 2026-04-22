@@ -55,13 +55,17 @@ services:
       retries: 10
 
   backend:
-    # CI 에서 빌드·푸시된 사전 빌드 이미지
+    # CI 에서 빌드·푸시된 사전 빌드 이미지 (develop 기준)
     # 태그 선택:
-    #   - latest   : main 브랜치 최신
-    #   - sprint2  : sprint2 브랜치 최신
-    #   - develop  : develop 브랜치 최신
-    #   - sha-xxx  : 특정 커밋 고정
-    image: ghcr.io/dookia-team/teamflow-backend:${BACKEND_IMAGE_TAG:-sprint2}
+    #   - develop   : 통합 완료된 개발 최신 (기본값, 프론트 권장)
+    #   - latest    : main 브랜치 안정 릴리스
+    #   - main      : main 과 동일
+    #   - sha-xxxxx : 특정 커밋 고정 (재현/버그 리포트용)
+    #   - <branch>  : workflow_dispatch 로 수동 빌드한 브랜치 (예: sprint3)
+    #
+    # 태그 바꾸기:
+    #   BACKEND_IMAGE_TAG=sha-abc1234 docker compose -f docker-compose.frontend.yml up -d
+    image: ghcr.io/dookia-team/teamflow-backend:${BACKEND_IMAGE_TAG:-develop}
     container_name: teamflow-backend
     env_file:
       - path: .env
