@@ -7,7 +7,7 @@ import com.dookia.teamflow.project.entity.ProjectMember;
 import com.dookia.teamflow.project.entity.ProjectMemberRole;
 import com.dookia.teamflow.project.repository.ProjectMemberRepository;
 import com.dookia.teamflow.project.repository.ProjectRepository;
-import com.dookia.teamflow.workspace.exception.WorkspaceAccessDeniedException;
+import com.dookia.teamflow.exception.WorkspaceAccessDeniedException;
 import com.dookia.teamflow.workspace.repository.WorkspaceMemberRepository;
 import com.dookia.teamflow.workspace.repository.WorkspaceRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,11 +38,11 @@ public class ProjectService {
             throw new IllegalStateException("이미 사용 중인 프로젝트 key 입니다: " + request.key());
         }
 
-        Project saved = projectRepository.save(Project.create(
+        Project project = projectRepository.save(Project.create(
             workspaceNo, request.name(), request.key(), request.description(), request.visibility()
         ));
-        projectMemberRepository.save(ProjectMember.of(saved.getNo(), creatorUserNo, ProjectMemberRole.OWNER));
-        return ProjectDto.Response.from(saved);
+        projectMemberRepository.save(ProjectMember.of(project.getNo(), creatorUserNo, ProjectMemberRole.OWNER));
+        return ProjectDto.Response.from(project);
     }
 
     @Transactional(readOnly = true)

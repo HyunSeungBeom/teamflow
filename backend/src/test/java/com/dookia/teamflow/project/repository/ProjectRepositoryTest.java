@@ -88,4 +88,45 @@ class ProjectRepositoryTest {
 
         assertThat(projectMemberRepository.countByProjectNo(project.getNo())).isEqualTo(1);
     }
+
+    @Test
+    @DisplayName("findByIdForUpdate — 존재하는 프로젝트를 managed entity 로 반환")
+    void findByIdForUpdate_returnsProject() {
+        Workspace ws = workspaceRepository.save(Workspace.create("W"));
+        Project saved = projectRepository.save(Project.create(ws.getNo(), "TeamFlow", "TF", null, null));
+        em.flush();
+        em.clear();
+
+        Project locked = projectRepository.findByIdForUpdate(saved.getNo()).orElseThrow();
+        assertThat(locked.getKey()).isEqualTo("TF");
+        assertThat(locked.getWorkspaceNo()).isEqualTo(ws.getNo());
+        assertThat(locked.getTicketCounter()).isZero();
+    }
+
+    @Test
+    @DisplayName("findByIdForUpdate — 없는 id 는 Optional.empty")
+    void findByIdForUpdate_missingIsEmpty() {
+        assertThat(projectRepository.findByIdForUpdate(999_999L)).isEmpty();
+    }
+
+    @Test
+    @DisplayName("findByIdForUpdate 후 nextTicketNumber 호출이 영속성 컨텍스트에 반영된다")
+    void findByIdForUpdate_allowsAtomicIncrement() {
+        Workspace ws = workspaceRepository.save(Workspace.create("W"));
+        Project saved = projectRepository.save(Project.create(ws.getNo(), "TeamFlow", "TF", null, null));
+        em.flush();
+        em.clear();
+
+        Project locked = projectRepository.findByIdForUpdate(saved.getNo()).orElseThrow();
+        int first = locked.nextTicketNumber();
+        int second = locked.nextTicketNumber();
+        em.flush();
+
+        assertThat(first).isEqualTo(1);
+        assertThat(second).isEqualTo(2);
+
+        em.clear();
+        Project reloaded = projectRepository.findById(saved.getNo()).orElseThrow();
+        assertThat(reloaded.getTicketCounter()).isEqualTo(2);
+    }
 }

@@ -9,11 +9,14 @@ import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * 티켓 도메인 요청/응답 DTO. backend-conventions.md 규칙에 따라 {Domain}Dto.java 하나에 inner record 로 선언.
  */
 public class TicketDto {
+
+    private static final int DESCRIPTION_MAX_LENGTH = 5000;
 
     private TicketDto() {
     }
@@ -23,6 +26,7 @@ public class TicketDto {
         @Size(min = 2, max = 200, message = "제목은 2~200자여야 합니다.")
         String title,
 
+        @Size(max = DESCRIPTION_MAX_LENGTH, message = "설명은 5000자 이하여야 합니다.")
         String description,
         TicketStatus status,
         TicketPriority priority,
@@ -34,6 +38,7 @@ public class TicketDto {
         @Size(min = 2, max = 200, message = "제목은 2~200자여야 합니다.")
         String title,
 
+        @Size(max = DESCRIPTION_MAX_LENGTH, message = "설명은 5000자 이하여야 합니다.")
         String description,
         TicketStatus status,
         TicketPriority priority,
@@ -51,7 +56,9 @@ public class TicketDto {
         TicketPriority priority,
         Long assigneeUserNo,
         int position,
-        LocalDate dueDate
+        LocalDate dueDate,
+        LocalDateTime createDate,
+        LocalDateTime updateDate
     ) {
         public static Response from(Ticket ticket) {
             return new Response(
@@ -64,7 +71,9 @@ public class TicketDto {
                 ticket.getPriority(),
                 ticket.getAssigneeUserNo(),
                 ticket.getPosition(),
-                ticket.getDueDate()
+                ticket.getDueDate(),
+                ticket.getCreateDate(),
+                ticket.getUpdateDate()
             );
         }
     }

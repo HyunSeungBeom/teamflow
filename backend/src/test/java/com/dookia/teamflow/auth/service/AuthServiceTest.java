@@ -3,8 +3,8 @@ package com.dookia.teamflow.auth.service;
 import com.dookia.teamflow.auth.config.JwtProperties;
 import com.dookia.teamflow.auth.dto.AuthDto;
 import com.dookia.teamflow.auth.entity.RefreshToken;
-import com.dookia.teamflow.auth.exception.AuthErrorCode;
-import com.dookia.teamflow.auth.exception.AuthException;
+import com.dookia.teamflow.exception.AuthErrorCode;
+import com.dookia.teamflow.exception.AuthException;
 import com.dookia.teamflow.auth.oauth.OAuthProvider;
 import com.dookia.teamflow.auth.oauth.OAuthProviderRegistry;
 import com.dookia.teamflow.auth.oauth.OAuthUserInfo;
@@ -89,7 +89,7 @@ class AuthServiceTest {
         assertThat(result.accessToken()).isEqualTo("access.jwt.token");
         assertThat(result.refreshTokenPlain()).isNotBlank();
         verify(userRepository, times(1)).save(any(User.class));
-        verify(refreshTokenRepository, times(1)).save(any(RefreshToken.class));
+        verify(refreshTokenRepository, times(1)).save(any(RefreshToken.class), any(Duration.class));
     }
 
     @Test
@@ -143,10 +143,14 @@ class AuthServiceTest {
         assertThat(result.refreshTokenPlain()).isNotEqualTo(plain);
         assertThat(result.user()).isSameAs(user);
 
-        ArgumentCaptor<RefreshToken> captor = ArgumentCaptor.forClass(RefreshToken.class);
-        verify(refreshTokenRepository).save(captor.capture());
-        assertThat(captor.getValue().getFamilyId()).isEqualTo(familyId);
-        assertThat(captor.getValue().isUsed()).isFalse();
+        // save 순서: 1st = 새 토큰 저장 (used=false), 2nd = 기존 토큰 markUsed (used=true)
+        // 중간 예외 시 기존 토큰이 여전히 유효하도록 순서를 뒤집었다.
+        ArgumentCaptor<RefreshToken> tokenCaptor = ArgumentCaptor.forClass(RefreshToken.class);
+        verify(refreshTokenRepository, times(2)).save(tokenCaptor.capture(), any(Duration.class));
+        List<RefreshToken> saved = tokenCaptor.getAllValues();
+        assertThat(saved.get(0).isUsed()).isFalse();          // 1st: 새 refresh 토큰
+        assertThat(saved.get(0).getFamilyId()).isEqualTo(familyId);
+        assertThat(saved.get(1).isUsed()).isTrue();           // 2nd: markUsed 반영 저장
     }
 
     @Test

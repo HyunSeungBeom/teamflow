@@ -8,7 +8,7 @@ import com.dookia.teamflow.ticket.repository.TicketRepository;
 import com.dookia.teamflow.project.entity.Project;
 import com.dookia.teamflow.project.repository.ProjectRepository;
 // ProjectRepository 는 create() 에서 ticket_counter 증가/ticketKey 조립에 필요 (권한 검증에는 더 이상 사용되지 않음).
-import com.dookia.teamflow.workspace.exception.WorkspaceAccessDeniedException;
+import com.dookia.teamflow.exception.WorkspaceAccessDeniedException;
 import com.dookia.teamflow.workspace.repository.WorkspaceMemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,14 +30,17 @@ public class TicketService {
     private final WorkspaceMemberRepository workspaceMemberRepository;
 
     public TicketDto.Response create(Long projectNo, Long userNo, TicketDto.CreateRequest request) {
-        Project project = projectRepository.findById(projectNo)
+        // PESSIMISTIC_WRITE 로 프로젝트 행을 잠근 상태에서 권한 검증 → ticket_counter 증가 → ticketKey 조립까지 원자적으로 수행한다.
+        // 권한 검증을 락 윈도우 안에서 수행해 TOCTOU 를 제거하고, 동일 프로젝트의 동시 create 로 인한 ticketKey 중복을 막는다.
+        Project project = projectRepository.findByIdForUpdate(projectNo)
             .orElseThrow(() -> new EntityNotFoundException("Project", projectNo));
         requireWorkspaceMember(project.getWorkspaceNo(), userNo);
+        requireAssigneeIsWorkspaceMember(project.getWorkspaceNo(), request.assigneeUserNo());
 
         int ticketNumber = project.nextTicketNumber();
         String ticketKey = project.getKey() + "-" + ticketNumber;
 
-        Ticket saved = ticketRepository.save(Ticket.create(
+        Ticket ticket = ticketRepository.save(Ticket.create(
             project.getWorkspaceNo(),
             projectNo,
             ticketKey,
@@ -49,7 +52,7 @@ public class TicketService {
             request.dueDate(),
             0
         ));
-        return TicketDto.Response.from(saved);
+        return TicketDto.Response.from(ticket);
     }
 
     @Transactional(readOnly = true)
@@ -73,6 +76,7 @@ public class TicketService {
     public TicketDto.Response update(Long ticketNo, Long userNo, TicketDto.UpdateRequest request) {
         Ticket ticket = loadActive(ticketNo);
         requireWorkspaceMember(ticket.getWorkspaceNo(), userNo);
+        requireAssigneeIsWorkspaceMember(ticket.getWorkspaceNo(), request.assigneeUserNo());
 
         if (request.title() != null || request.description() != null || request.dueDate() != null) {
             ticket.updateDetails(request.title(), request.description(), request.dueDate());
@@ -140,6 +144,19 @@ public class TicketService {
     private void requireWorkspaceMember(Long workspaceNo, Long userNo) {
         if (!workspaceMemberRepository.existsByWorkspaceNoAndUserNo(workspaceNo, userNo)) {
             throw new WorkspaceAccessDeniedException("워크스페이스 멤버가 아닙니다.");
+        }
+    }
+
+    /**
+     * 담당자 검증: assigneeUserNo 가 지정된 경우 해당 워크스페이스의 멤버여야 한다.
+     * null 이면 "담당자 없음" 으로 해석해 검증을 건너뛴다. (해제는 unassignAssignee 엔드포인트가 담당)
+     */
+    private void requireAssigneeIsWorkspaceMember(Long workspaceNo, Long assigneeUserNo) {
+        if (assigneeUserNo == null) {
+            return;
+        }
+        if (!workspaceMemberRepository.existsByWorkspaceNoAndUserNo(workspaceNo, assigneeUserNo)) {
+            throw new IllegalArgumentException("담당자는 워크스페이스 멤버여야 합니다.");
         }
     }
 }

@@ -3,8 +3,8 @@ package com.dookia.teamflow.auth.service;
 import com.dookia.teamflow.auth.config.JwtProperties;
 import com.dookia.teamflow.auth.dto.AuthDto;
 import com.dookia.teamflow.auth.entity.RefreshToken;
-import com.dookia.teamflow.auth.exception.AuthErrorCode;
-import com.dookia.teamflow.auth.exception.AuthException;
+import com.dookia.teamflow.exception.AuthErrorCode;
+import com.dookia.teamflow.exception.AuthException;
 import com.dookia.teamflow.auth.oauth.OAuthProvider;
 import com.dookia.teamflow.auth.oauth.OAuthProviderRegistry;
 import com.dookia.teamflow.auth.oauth.OAuthUserInfo;
@@ -85,26 +85,32 @@ public class AuthService {
         }
 
         String hash = sha256Hex(plainRefreshToken);
-        RefreshToken stored = refreshTokenRepository.findByTokenHash(hash)
+        RefreshToken refreshToken = refreshTokenRepository.findByTokenHash(hash)
             .orElseThrow(() -> new AuthException(AuthErrorCode.AUTH_TOKEN_INVALID));
 
-        if (stored.isExpired()) {
+        if (refreshToken.isExpired()) {
             throw new AuthException(AuthErrorCode.AUTH_TOKEN_EXPIRED);
         }
 
-        if (stored.isUsed()) {
-            log.warn("Refresh token replay detected. familyId={}, userNo={}", stored.getFamilyId(), stored.getUserNo());
-            refreshTokenRepository.deleteByFamilyId(stored.getFamilyId());
+        if (refreshToken.isUsed()) {
+            log.warn("Refresh token replay detected. familyId={}, userNo={}", refreshToken.getFamilyId(), refreshToken.getUserNo());
+            refreshTokenRepository.deleteByFamilyId(refreshToken.getFamilyId());
             throw new AuthException(AuthErrorCode.AUTH_TOKEN_REUSED);
         }
 
-        User user = userRepository.findById(stored.getUserNo())
+        User user = userRepository.findById(refreshToken.getUserNo())
             .orElseThrow(() -> new AuthException(AuthErrorCode.AUTH_TOKEN_INVALID));
 
-        stored.markUsed();
-
+        // 새 토큰 발급을 먼저 완료한 뒤 기존 토큰을 markUsed 로 마감한다.
+        // 이 순서 덕분에 중간 예외 시에는 기존 토큰이 여전히 유효 → 사용자가 재시도 가능 (강제 로그아웃 방지).
         String accessToken = jwtService.issueAccessToken(user);
-        IssuedRefreshToken newRefresh = issueRefreshToken(user, stored.getFamilyId(), userAgent, ipAddress);
+        IssuedRefreshToken newRefresh = issueRefreshToken(user, refreshToken.getFamilyId(), userAgent, ipAddress);
+
+        refreshToken.markUsed();
+        Duration remainingTtl = Duration.between(LocalDateTime.now(), refreshToken.getExpireDate());
+        if (!remainingTtl.isNegative() && !remainingTtl.isZero()) {
+            refreshTokenRepository.save(refreshToken, remainingTtl);
+        }
 
         return new RefreshResult(accessToken, newRefresh.plainToken(), user, newRefresh.expiresAt());
     }
@@ -126,10 +132,11 @@ public class AuthService {
         String plain = Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
         String hash = sha256Hex(plain);
 
-        LocalDateTime expiresAt = LocalDateTime.now()
-            .plus(Duration.ofSeconds(jwtProperties.refreshTokenTtlSeconds()));
+        Duration ttl = Duration.ofSeconds(jwtProperties.refreshTokenTtlSeconds());
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime expiresAt = now.plus(ttl);
 
-        RefreshToken entity = RefreshToken.builder()
+        RefreshToken refreshToken = RefreshToken.builder()
             .userNo(user.getNo())
             .tokenHash(hash)
             .familyId(familyId)
@@ -137,9 +144,10 @@ public class AuthService {
             .userAgent(userAgent != null ? userAgent : "unknown")
             .ipAddress(ipAddress)
             .expireDate(expiresAt)
+            .createDate(now)
             .build();
 
-        refreshTokenRepository.save(entity);
+        refreshTokenRepository.save(refreshToken, ttl);
         return new IssuedRefreshToken(plain, expiresAt);
     }
 

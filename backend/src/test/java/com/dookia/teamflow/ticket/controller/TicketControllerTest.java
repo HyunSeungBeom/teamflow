@@ -6,7 +6,7 @@ import com.dookia.teamflow.ticket.dto.TicketDto;
 import com.dookia.teamflow.ticket.entity.TicketPriority;
 import com.dookia.teamflow.ticket.entity.TicketStatus;
 import com.dookia.teamflow.ticket.service.TicketService;
-import com.dookia.teamflow.workspace.exception.WorkspaceAccessDeniedException;
+import com.dookia.teamflow.exception.WorkspaceAccessDeniedException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -60,7 +60,8 @@ class TicketControllerTest {
     private TicketDto.Response sampleResponse(Long no, String key) {
         return new TicketDto.Response(
             no, 50L, key, "로그인 화면 구현", "desc",
-            TicketStatus.BACKLOG, TicketPriority.HIGH, null, 0, LocalDate.of(2026, 4, 25));
+            TicketStatus.BACKLOG, TicketPriority.HIGH, null, 0, LocalDate.of(2026, 4, 25),
+            null, null);
     }
 
     @Test
@@ -166,7 +167,8 @@ class TicketControllerTest {
         authenticatedAs(2L);
         TicketDto.Response updated = new TicketDto.Response(
             101L, 50L, "TF-1", "로그인 화면 구현", "desc",
-            TicketStatus.IN_PROGRESS, TicketPriority.CRITICAL, 7L, 0, null);
+            TicketStatus.IN_PROGRESS, TicketPriority.CRITICAL, 7L, 0, null,
+            null, null);
         given(ticketService.update(eq(101L), eq(2L), any(TicketDto.UpdateRequest.class)))
             .willReturn(updated);
 
@@ -289,7 +291,8 @@ class TicketControllerTest {
         authenticatedAs(2L);
         TicketDto.Response unassigned = new TicketDto.Response(
             101L, 50L, "TF-1", "로그인 화면 구현", "desc",
-            TicketStatus.BACKLOG, TicketPriority.HIGH, null, 0, LocalDate.of(2026, 4, 25));
+            TicketStatus.BACKLOG, TicketPriority.HIGH, null, 0, LocalDate.of(2026, 4, 25),
+            null, null);
         given(ticketService.unassignAssignee(101L, 2L)).willReturn(unassigned);
 
         mockMvc.perform(delete("/api/tickets/101/assignee"))
