@@ -63,6 +63,9 @@ services:
     #   - sha-xxx  : 특정 커밋 고정
     image: ghcr.io/dookia-team/teamflow-backend:${BACKEND_IMAGE_TAG:-sprint2}
     container_name: teamflow-backend
+    env_file:
+      - path: .env
+        required: false
     depends_on:
       postgres:
         condition: service_healthy
