@@ -102,9 +102,7 @@ export function BoardPage() {
 
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
-      setTimeout(() => {
-        isDraggingRef.current = false
-      }, 0)
+      isDraggingRef.current = false
       setActiveTicket(null)
       const { active, over } = event
       if (!over || !tickets) return

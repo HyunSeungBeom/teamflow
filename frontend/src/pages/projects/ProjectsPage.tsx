@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { WorkspaceModal } from '@/features/workspace'
 import { useWorkspaces } from '@/features/workspace'
@@ -12,9 +12,11 @@ export function ProjectsPage() {
   const [showWorkspaceModal, setShowWorkspaceModal] = useState(isNewUser)
   const [showCreateProjectModal, setShowCreateProjectModal] = useState(false)
 
-  if (isNewUser) {
-    window.history.replaceState({}, '')
-  }
+  useEffect(() => {
+    if (isNewUser) {
+      window.history.replaceState({}, '')
+    }
+  }, [isNewUser])
 
   const handleWorkspaceCreated = () => {
     setShowWorkspaceModal(false)

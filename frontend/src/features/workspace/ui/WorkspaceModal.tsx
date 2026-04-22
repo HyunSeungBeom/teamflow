@@ -35,7 +35,8 @@ export function WorkspaceModal({ isOpen, onClose, onSuccess }: WorkspaceModalPro
       onSuccess?.(workspaceNo)
       onClose()
       toast.success('워크스페이스가 생성되었습니다.')
-    } catch {
+    } catch (error) {
+      console.error('워크스페이스 생성 실패:', error)
       toast.error('워크스페이스 생성에 실패했습니다.')
     }
   }

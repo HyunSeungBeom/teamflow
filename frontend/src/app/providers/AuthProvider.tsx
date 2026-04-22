@@ -27,7 +27,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const { data } = await authApi.refresh()
         setAuth(data.accessToken, data.user)
-      } catch {
+      } catch (error) {
+        console.error('Auth restore failed:', error)
         clearAuth()
       }
     }

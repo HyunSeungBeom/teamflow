@@ -44,7 +44,8 @@ export function CreateProjectModal({ isOpen, onClose, workspaceNo }: CreateProje
       reset()
       onClose()
       toast.success('프로젝트가 생성되었습니다.')
-    } catch {
+    } catch (error) {
+      console.error('프로젝트 생성 실패:', error)
       toast.error('프로젝트 생성에 실패했습니다.')
     }
   }

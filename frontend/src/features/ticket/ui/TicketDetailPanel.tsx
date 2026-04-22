@@ -79,6 +79,8 @@ function TicketDetailPanelInner({
     },
   })
 
+  const { ref: dueDateRef, ...dueDateRest } = register('dueDate')
+
   const onSubmit = useCallback(
     (data: TicketFormValues) => {
       const payload: Record<string, unknown> = {}
@@ -150,9 +152,9 @@ function TicketDetailPanelInner({
             <input
               type="date"
               className="w-full border border-grey-200 rounded-input px-3 py-2 text-sm text-grey-900 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-primary-400 cursor-pointer"
-              {...register('dueDate')}
+              {...dueDateRest}
               ref={(e) => {
-                register('dueDate').ref(e)
+                dueDateRef(e)
                 dateInputRef.current = e
               }}
               onClick={() => dateInputRef.current?.showPicker()}

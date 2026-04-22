@@ -25,7 +25,8 @@ export function DeleteTicketDialog({
     try {
       await deleteTicket.mutateAsync({ ticketNo: ticket.no, projectNo })
       onSuccess()
-    } catch {
+    } catch (error) {
+      console.error('티켓 삭제 실패:', error)
       toast.error('티켓 삭제에 실패했습니다.')
     }
   }

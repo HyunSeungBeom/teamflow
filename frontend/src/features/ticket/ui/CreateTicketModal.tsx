@@ -4,13 +4,15 @@ import { z } from 'zod'
 import { Modal, Button, Input, Select, Textarea, Spinner } from '@/shared/ui'
 import { useCreateTicket } from '../model/useCreateTicket'
 import { toast } from '@/shared/model/useToastStore'
-import type { TicketStatus } from '@/entities/ticket'
+
+const ticketStatuses = ['BACKLOG', 'TODO', 'IN_PROGRESS', 'DONE'] as const
+const ticketPriorities = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'] as const
 
 const createTicketSchema = z.object({
   title: z.string().min(2, '제목은 2자 이상이어야 합니다').max(200, '제목은 200자 이하여야 합니다'),
   description: z.string().optional(),
-  status: z.string().optional(),
-  priority: z.string().optional(),
+  status: z.enum(ticketStatuses).optional(),
+  priority: z.enum(ticketPriorities).optional(),
   assigneeNo: z.string().optional(),
   dueDate: z.string().optional(),
 })
@@ -64,7 +66,7 @@ export function CreateTicketModal({ isOpen, onClose, projectNo }: CreateTicketMo
         data: {
           title: data.title,
           description: data.description || undefined,
-          status: (data.status || 'BACKLOG') as TicketStatus,
+          status: data.status ?? 'BACKLOG',
           priority: data.priority,
           dueDate: data.dueDate || undefined,
         },
@@ -72,7 +74,8 @@ export function CreateTicketModal({ isOpen, onClose, projectNo }: CreateTicketMo
       reset()
       onClose()
       toast.success('티켓이 생성되었습니다.')
-    } catch {
+    } catch (error) {
+      console.error('티켓 생성 실패:', error)
       toast.error('티켓 생성에 실패했습니다.')
     }
   }
