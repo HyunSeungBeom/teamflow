@@ -3,12 +3,13 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Modal, Button, Input, Select, Textarea, Spinner } from '@/shared/ui'
 import { useCreateTicket } from '../model/useCreateTicket'
+import type { TicketStatus } from '@/entities/ticket'
 
 const createTicketSchema = z.object({
   title: z.string().min(2, '제목은 2자 이상이어야 합니다').max(200, '제목은 200자 이하여야 합니다'),
   description: z.string().optional(),
-  status: z.string().default('BACKLOG'),
-  priority: z.string().default('MEDIUM'),
+  status: z.string().optional(),
+  priority: z.string().optional(),
   assigneeNo: z.string().optional(),
   dueDate: z.string().optional(),
 })
@@ -62,7 +63,7 @@ export function CreateTicketModal({ isOpen, onClose, projectNo }: CreateTicketMo
         data: {
           title: data.title,
           description: data.description || undefined,
-          status: data.status,
+          status: (data.status || 'BACKLOG') as TicketStatus,
           priority: data.priority,
           dueDate: data.dueDate || undefined,
         },
