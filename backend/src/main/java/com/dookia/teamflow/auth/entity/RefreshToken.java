@@ -1,13 +1,6 @@
 package com.dookia.teamflow.auth.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,68 +10,44 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 /**
- * REFRESH_TOKEN 엔티티. ERD v0.1 §1 을 따른다.
- * - token_hash : 원문이 아닌 SHA-256 해시
- * - family_id  : Token Rotation 계열 식별 (UUID 문자열)
- * - used       : Replay Detection 플래그
+ * REFRESH_TOKEN 값 객체. Redis 에 JSON 으로 직렬화되어 저장된다.
+ * TTL 은 엔티티 속성이 아니라 저장 시점의 정책 파라미터이므로 Repository.save() 호출 시 Duration 으로 전달한다.
  *
- * ERD 주석상 최종 저장소는 Redis 로 가정하나, Sprint 1 범위에서는 RDB 로 구현한다.
+ * <ul>
+ *   <li>token key    : {@code refresh:token:{tokenHash}}  — String, TTL=저장 시 전달된 Duration</li>
+ *   <li>family index : {@code refresh:family:{familyId}} — Redis Set, 멤버={tokenHash}, 동일 TTL</li>
+ * </ul>
  */
-@Entity
-@Table(
-    name = "refresh_token",
-    indexes = @Index(name = "idx_rt_family", columnList = "family_id")
-)
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 public class RefreshToken {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "no")
-    private Long no;
-
-    @Column(name = "user_no", nullable = false)
-    private Long userNo;
-
-    @Column(name = "token_hash", nullable = false, unique = true, length = 128)
     private String tokenHash;
-
-    @Column(name = "family_id", nullable = false, length = 64)
+    private Long userNo;
     private String familyId;
-
-    @Column(nullable = false)
     private boolean used;
-
-    @Column(name = "user_agent", nullable = false, length = 500)
     private String userAgent;
-
-    @Column(name = "ip_address", length = 45)
     private String ipAddress;
-
-    @Column(name = "expire_date", nullable = false)
     private LocalDateTime expireDate;
-
-    @Column(name = "create_date", nullable = false, updatable = false)
     private LocalDateTime createDate;
-
-    @PrePersist
-    void onCreate() {
-        if (createDate == null) {
-            createDate = LocalDateTime.now();
-        }
-    }
 
     public void markUsed() {
         this.used = true;
     }
 
+    /**
+     * Jackson 이 isXxx() 를 boolean getter 로 인식해 JSON 에 "expired" 필드를 생성하는 것을 막는다.
+     * 이 플래그는 저장 대상 상태가 아니라 expireDate 로부터 계산되는 파생값이다.
+     */
+    @JsonIgnore
     public boolean isExpired() {
-        return LocalDateTime.now().isAfter(expireDate);
+        return expireDate != null && LocalDateTime.now().isAfter(expireDate);
     }
 
+    /** @see #isExpired() — 파생값이라 직렬화에서 제외한다. */
+    @JsonIgnore
     public boolean isValid() {
         return !used && !isExpired();
     }

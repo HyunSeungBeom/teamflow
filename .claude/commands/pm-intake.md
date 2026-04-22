@@ -34,6 +34,9 @@ Primary PM references:
 - @.claude/scripts/atlassian_cli.py
 - @.claude/memory/DECISIONS.md
 
+Source-of-truth schema reference (ERD) — **MUST read before drafting PRD/HANDOFF**:
+- @.planning/architecture/ERD.md
+
 Output directory:
 - @.planning/pm/current/
 - @.planning/audit/
@@ -49,28 +52,38 @@ Output directory:
    - call Figma MCP for each unique link before finalizing artifacts,
    - capture evidence (`file/key`, page/frame names, key tokens/components used),
    - if Figma MCP fails, mark build readiness as blocked.
-5. Produce a concise PRD with measurable success criteria and explicit non-goals.
-6. Produce one sprint pack mapped to one implementation phase.
-7. Generate implementation-ready stories and acceptance criteria with requirement trace.
-8. Generate `.planning/pm/current/RISK-IMPACT.md` using `RISK-IMPACT-TEMPLATE`:
+5. **ERD alignment gate (required before PRD/HANDOFF drafting).** Load `.planning/architecture/ERD.md` in full and confirm the following for every domain concept in scope:
+   - [ ] Table name already exists in ERD — if yes, use that exact name; if no, propose an ADD to ERD in this sprint's RISK-IMPACT as an "ERD extension" decision requiring explicit approval.
+   - [ ] Column naming follows ERD conventions — PK `no`, FK `{table}_no`, role-qualified FK (e.g. `assignee_user_no`, `reporter_user_no`) when the same USER is referenced in multiple roles.
+   - [ ] Enum values (`status`, `priority`, `type`, etc.) match existing ERD values. Any new enum value must be listed in RISK-IMPACT with rationale.
+   - [ ] Cross-cutting policies hold (e.g. `position` columns are **not** exposed as raw values in the API per ERD §2 — clients send `{ beforeNo, afterNo }`).
+   - [ ] Soft-delete, timestamps, and audit columns follow ERD (`create_date`, `update_date`, `delete_date`).
+   Record the alignment result (pass / extension-needed / conflict) in the audit log. If extension-needed or conflict, block build readiness until the user approves the ERD change.
+6. Produce a concise PRD with measurable success criteria and explicit non-goals. Reuse the canonical domain names from the ERD — do **not** invent product-side synonyms that diverge from the schema.
+7. Produce one sprint pack mapped to one implementation phase.
+8. Generate implementation-ready stories and acceptance criteria with requirement trace.
+9. Generate `.planning/pm/current/RISK-IMPACT.md` using `RISK-IMPACT-TEMPLATE`:
    - include risk register + brownfield impact map,
    - classify severity (`low/medium/high/critical`),
-   - list required user decisions for unresolved high/critical risks.
-9. Update `.claude/memory/DECISIONS.md` with:
+   - list required user decisions for unresolved high/critical risks,
+   - include an **ERD alignment section** summarizing step 5 results — any "extension-needed" or "conflict" items must appear here with severity ≥ high and a named decision owner.
+10. Update `.claude/memory/DECISIONS.md` with:
    - key scope decisions,
    - accepted/rejected options,
-   - unresolved decision owners.
-10. Write these files:
+   - unresolved decision owners,
+   - ERD alignment outcomes (referenced tables, proposed extensions, rejected divergences).
+11. Write these files (use canonical ERD names only — e.g. `TICKET` not `ISSUE` if ERD defines `TICKET`):
    - `.planning/pm/current/PRD.md`
    - `.planning/pm/current/SPRINT.md`
    - `.planning/pm/current/STORIES.md`
    - `.planning/pm/current/HANDOFF.md`
    - `.planning/pm/current/RISK-IMPACT.md`
-11. Write one step audit log in `.planning/audit/` using `AUDIT-STEP-TEMPLATE`:
-   - include questions asked, requirement assumptions, link-ingest evidence, Figma MCP evidence, and risk gate state.
-12. End with a short readiness report:
+12. Write one step audit log in `.planning/audit/` using `AUDIT-STEP-TEMPLATE`:
+   - include questions asked, requirement assumptions, link-ingest evidence, Figma MCP evidence, ERD alignment result, and risk gate state.
+13. End with a short readiness report:
    - ready for build: yes/no
    - risk gate: pass/blocked
+   - ERD alignment: pass / extension-needed / conflict
    - blockers
    - open questions
 </process>

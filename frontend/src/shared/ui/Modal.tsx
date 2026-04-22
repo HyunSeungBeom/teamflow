@@ -39,7 +39,10 @@ export function Modal({ isOpen, onClose, title, children, className }: ModalProp
       }}
     >
       <div
-        className={twMerge('bg-white rounded-modal shadow-xl w-full mx-4 p-8', className)}
+        className={twMerge(
+          'bg-white rounded-modal shadow-xl w-full mx-4 max-w-[520px] p-8',
+          className,
+        )}
         role="dialog"
         aria-modal="true"
         aria-label={title}

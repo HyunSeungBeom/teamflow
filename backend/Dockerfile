@@ -6,7 +6,8 @@ WORKDIR /workspace
 
 COPY gradlew settings.gradle build.gradle ./
 COPY gradle ./gradle
-RUN chmod +x gradlew && ./gradlew --version --no-daemon
+# Windows 체크아웃(CRLF) 대응: busybox sh 가 shebang 파싱에 실패하므로 LF 로 정규화
+RUN sed -i 's/\r$//' gradlew && chmod +x gradlew && ./gradlew --version --no-daemon
 
 COPY src ./src
 RUN ./gradlew bootJar --no-daemon -x test

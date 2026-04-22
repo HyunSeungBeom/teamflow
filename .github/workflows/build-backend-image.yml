@@ -1,0 +1,71 @@
+# 백엔드 Docker 이미지 빌드 + GHCR 푸시
+#
+# 목적: 프론트엔드 개발자가 JVM 없이 `docker compose pull && up` 한 방으로
+#       전체 백엔드 스택(Postgres + Redis + API)을 로컬에서 띄울 수 있게 한다.
+#
+# 이미지: ghcr.io/dookia-team/teamflow-backend
+#
+# 트리거 정책:
+#   - push(develop) → :develop, :<short-sha>       (프론트 기본 연동 태그)
+#   - push(main)    → :main, :latest, :<short-sha> (안정 릴리스)
+#   - workflow_dispatch → 임의 브랜치(sprint3, feat/* 등) 수동 빌드
+#
+# sprint/feature 브랜치를 자동 대상에서 제외한 이유:
+#   sprint 브랜치는 rebase/force-push 가 빈번하여 "같은 태그, 다른 내용" 문제가 발생.
+#   프론트가 안정적으로 pull 할 수 있는 기준은 "통합 완료된 develop" 으로 고정한다.
+#   sprint 중간 산출물을 프론트에 노출해야 할 때만 Actions 탭 → Run workflow 로 수동 실행.
+
+name: build-backend-image
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/build-backend-image.yml'
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository_owner }}/teamflow-backend
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=sha,format=short
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
